@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CoreLab — Presentación</title>
+<meta name="description" content="CoreLab: aprender sin ahogarse en papeleo. Presentación del proyecto." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+<style>
+  /* ============================================================
+     CoreLab · Presentación
+     Estilo Apple keynote: mucho aire, tipografía enorme,
+     pocas palabras. El speech lo es todo.
+     ============================================================ */
+
+  :root {
+    --negro:   #000000;
+    --carbon:  #0B0B0C;
+    --blanco:  #FFFFFF;
+    --hueso:   #F5F5F7;
+    --tinta:   #1D1D1F;
+    --gris:    #86868B;
+    --grisOsc: #6E6E73;
+    --linea:   rgba(0,0,0,.10);
+    --lineaInv:rgba(255,255,255,.12);
+    --acento:  #22D3EE;   /* el cian del propio simulador */
+    --verde:   #10B981;
+    --ambar:   #F59E0B;
+
+    --max: 1080px;
+    --easing: cubic-bezier(.16,.84,.44,1);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--negro);
+    color: var(--tinta);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Helvetica Neue", Arial, sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* ---------- Barra de progreso de lectura ---------- */
+  .progreso {
+    position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+    background: var(--acento); z-index: 100;
+    transition: width .1s linear;
+  }
+
+  /* ---------- Cabecera mínima ---------- */
+  .marca {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 90;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 24px;
+    font-size: 13px; letter-spacing: .02em;
+    color: rgba(255,255,255,.55);
+    mix-blend-mode: difference;
+    pointer-events: none;
+  }
+  .marca b { font-weight: 600; color: #fff; }
+
+  /* ---------- Estructura de secciones ---------- */
+  section {
+    position: relative;
+    padding: 18vh 24px;
+  }
+  .oscura { background: var(--negro); color: var(--hueso); }
+  .carbon { background: var(--carbon); color: var(--hueso); }
+  .clara  { background: var(--blanco); color: var(--tinta); }
+  .hueso  { background: var(--hueso); color: var(--tinta); }
+
+  .lienzo { max-width: var(--max); margin: 0 auto; }
+  .estrecho { max-width: 880px; margin: 0 auto; }
+
+  /* ---------- Tipografía ---------- */
+  .indice {
+    font-size: 13px; font-weight: 600; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--acento);
+    margin: 0 0 28px;
+  }
+  .indice .n { color: var(--gris); margin-right: 14px; }
+
+  h1 {
+    font-size: clamp(44px, 9.5vw, 116px);
+    line-height: .96; letter-spacing: -.035em; font-weight: 600;
+    margin: 0;
+  }
+  h2 {
+    font-size: clamp(36px, 6.6vw, 82px);
+    line-height: 1.02; letter-spacing: -.03em; font-weight: 600;
+    margin: 0;
+  }
+  h3 {
+    font-size: clamp(22px, 3vw, 34px);
+    line-height: 1.12; letter-spacing: -.02em; font-weight: 600;
+    margin: 0;
+  }
+  .lead {
+    font-size: clamp(18px, 2.1vw, 24px);
+    line-height: 1.45; font-weight: 400; color: var(--grisOsc);
+    max-width: 640px; margin: 28px 0 0;
+  }
+  .oscura .lead, .carbon .lead { color: var(--gris); }
+
+  .tenue { color: var(--gris); }
+  .degradado {
+    background: linear-gradient(92deg, #FFFFFF 0%, #A5F3FC 45%, #22D3EE 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    min-height: 100svh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding-top: 0; padding-bottom: 0;
+    background:
+      radial-gradient(900px 520px at 50% 8%, rgba(34,211,238,.16), transparent 62%),
+      var(--negro);
+  }
+  .hero .eyebrow {
+    font-size: 13px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--gris); margin: 0 0 30px;
+  }
+  .hero h1 { max-width: 14ch; }
+
+  .flecha {
+    position: absolute; bottom: 42px; left: 50%; transform: translateX(-50%);
+    font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--gris); display: flex; flex-direction: column;
+    align-items: center; gap: 12px;
+  }
+  .flecha .linea {
+    width: 1px; height: 46px;
+    background: linear-gradient(to bottom, var(--acento), transparent);
+    animation: bajar 2.1s var(--easing) infinite;
+  }
+  @keyframes bajar {
+    0%   { opacity: 0; transform: scaleY(.2); transform-origin: top; }
+    45%  { opacity: 1; transform: scaleY(1);  transform-origin: top; }
+    100% { opacity: 0; transform: scaleY(1);  transform-origin: bottom; }
+  }
+
+  /* ---------- Declaraciones a pantalla completa ---------- */
+  .declaracion {
+    min-height: 92svh;
+    display: flex; align-items: center;
+  }
+  .declaracion h2 { max-width: 15ch; }
+
+  /* ---------- Rejillas ---------- */
+  .rejilla {
+    display: grid; gap: 1px;
+    grid-template-columns: repeat(2, 1fr);
+    background: var(--linea);
+    border: 1px solid var(--linea);
+    border-radius: 20px; overflow: hidden;
+    margin-top: 56px;
+  }
+  .oscura .rejilla, .carbon .rejilla {
+    background: var(--lineaInv); border-color: var(--lineaInv);
+  }
+  .celda {
+    background: var(--blanco);
+    padding: 40px 34px 44px;
+  }
+  .oscura .celda, .carbon .celda { background: var(--negro); }
+  .hueso .celda { background: var(--hueso); }
+  .celda .marcaAgua {
+    font-size: 12px; font-weight: 600; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--gris);
+    display: block; margin-bottom: 18px;
+  }
+  .celda p {
+    margin: 14px 0 0; font-size: 16px; line-height: 1.55; color: var(--grisOsc);
+    max-width: 38ch;
+  }
+  .oscura .celda p, .carbon .celda p { color: var(--gris); }
+
+  .bloqueTitulo {
+    display: flex; align-items: baseline; gap: 16px;
+    margin-bottom: 8px;
+  }
+  .etiquetaGrupo {
+    font-size: 13px; font-weight: 600; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--gris);
+    margin: 96px 0 0;
+  }
+
+  /* ---------- Trío de columnas ---------- */
+  .trio {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 64px 48px; margin-top: 72px;
+  }
+  .trio h3 { margin-bottom: 14px; }
+  .trio p { margin: 0; font-size: 16px; line-height: 1.55; color: var(--grisOsc); }
+  .oscura .trio p, .carbon .trio p { color: var(--gris); }
+  .trio .num {
+    display: block; font-size: 13px; font-weight: 600;
+    letter-spacing: .12em; color: var(--acento); margin-bottom: 20px;
+  }
+
+  /* ---------- Cadena de transformación ---------- */
+  .cadena {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 18px;
+    margin-top: 72px;
+  }
+  .paso {
+    padding: 16px 26px; border-radius: 999px;
+    border: 1px solid var(--lineaInv);
+    font-size: clamp(14px, 1.7vw, 19px); font-weight: 500;
+    color: var(--hueso); white-space: nowrap;
+  }
+  .clara .paso, .hueso .paso { border-color: var(--linea); color: var(--tinta); }
+  .paso.destaca { border-color: var(--acento); color: var(--acento); }
+  .sep { color: var(--gris); font-size: 20px; }
+
+  /* ---------- Maqueta del simulador ---------- */
+  .maqueta {
+    margin-top: 72px;
+    border: 1px solid var(--lineaInv);
+    border-radius: 18px; overflow: hidden;
+    background: #1E293B;
+    box-shadow: 0 40px 90px -40px rgba(0,0,0,.9);
+  }
+  .maqueta .top {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 18px; border-bottom: 1px solid #334155;
+    background: #0F172A;
+  }
+  .punto { width: 9px; height: 9px; border-radius: 50%; background: #334155; }
+  .punto.on { background: var(--acento); }
+  .maqueta .top span {
+    margin-left: 10px; font-size: 12px; color: #94A3B8;
+  }
+  .maqueta .cuerpo { padding: 30px 28px 34px; }
+  .filaEstado {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    font-size: 12px; color: #94A3B8; margin-bottom: 18px;
+  }
+  .chip {
+    border: 1px solid #334155; border-radius: 999px; padding: 5px 12px;
+    color: #94A3B8;
+  }
+  .chip.cian   { border-color: rgba(34,211,238,.5); color: var(--acento); }
+  .chip.ambar  { border-color: rgba(245,158,11,.5); color: var(--ambar); }
+  .barra { height: 6px; border-radius: 999px; background: #0F172A; overflow: hidden; }
+  .barra i { display: block; height: 100%; width: 34%; background: var(--acento); border-radius: 999px; }
+  .maqueta .reto {
+    margin: 26px 0 0; font-size: clamp(17px, 2.2vw, 24px);
+    line-height: 1.35; color: #F1F5F9; font-weight: 600; letter-spacing: -.01em;
+  }
+  .promptLinea {
+    margin-top: 26px; display: flex; align-items: center; gap: 12px;
+    border: 1px solid #334155; border-radius: 12px;
+    background: #0F172A; padding: 14px 18px;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    font-size: 14px; color: #94A3B8;
+  }
+  .promptLinea b { color: var(--acento); font-weight: 700; }
+  .cursorBlink {
+    display: inline-block; width: 8px; height: 17px; background: var(--acento);
+    animation: parpadeo 1.1s step-end infinite; vertical-align: -3px;
+  }
+  @keyframes parpadeo { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+  .pie {
+    margin-top: 16px; font-size: 12px; color: #64748B;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  }
+
+  /* ---------- Listado de módulos ---------- */
+  .modulos { margin-top: 64px; border-top: 1px solid var(--lineaInv); }
+  .clara .modulos, .hueso .modulos { border-color: var(--linea); }
+  .modulo {
+    display: grid; grid-template-columns: 62px 1fr 1fr;
+    gap: 24px; align-items: baseline;
+    padding: 30px 0; border-bottom: 1px solid var(--lineaInv);
+  }
+  .clara .modulo, .hueso .modulo { border-color: var(--linea); }
+  .modulo .m {
+    font-size: 13px; font-weight: 600; letter-spacing: .1em; color: var(--acento);
+  }
+  .modulo h3 { font-size: clamp(20px, 2.4vw, 28px); }
+  .modulo p { margin: 0; font-size: 15px; line-height: 1.5; color: var(--gris); }
+  .clara .modulo p, .hueso .modulo p { color: var(--grisOsc); }
+
+  /* ---------- Escalera de certificaciones ---------- */
+  .escalera {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 16px; margin-top: 56px;
+  }
+  .rango {
+    border: 1px solid var(--lineaInv); border-radius: 16px;
+    padding: 26px 22px 28px;
+  }
+  .clara .rango, .hueso .rango { border-color: var(--linea); }
+  .rango .lvl {
+    font-size: 12px; font-weight: 600; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--gris); display: block; margin-bottom: 14px;
+  }
+  .rango strong {
+    display: block; font-size: clamp(16px, 1.8vw, 20px);
+    font-weight: 600; letter-spacing: -.01em; line-height: 1.2;
+  }
+  .rango span.dif { display: block; margin-top: 10px; font-size: 14px; color: var(--gris); }
+  .rango:last-child { border-color: rgba(34,211,238,.45); }
+  .rango:last-child strong { color: var(--acento); }
+
+  /* ---------- Pares problema → decisión ---------- */
+  .pares { margin-top: 64px; }
+  .par {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+    padding: 30px 0; border-top: 1px solid var(--linea);
+    align-items: start;
+  }
+  .oscura .par, .carbon .par { border-color: var(--lineaInv); }
+  .par .izq {
+    font-size: clamp(17px, 2vw, 22px); font-weight: 500;
+    letter-spacing: -.01em; color: var(--gris);
+  }
+  .par .der strong {
+    display: block; font-size: clamp(17px, 2vw, 22px); font-weight: 600;
+    letter-spacing: -.01em; margin-bottom: 10px;
+  }
+  .par .der span { font-size: 15px; line-height: 1.55; color: var(--grisOsc); }
+  .oscura .par .der span, .carbon .par .der span { color: var(--gris); }
+  .par .der strong::before {
+    content: "→"; color: var(--acento); margin-right: 12px; font-weight: 400;
+  }
+
+  /* ---------- Sectores ---------- */
+  .sectores {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--linea);
+    border: 1px solid var(--linea); border-radius: 20px;
+    overflow: hidden; margin-top: 64px;
+  }
+  .sector { background: var(--blanco); padding: 36px 30px 40px; }
+  .sector h3 { font-size: clamp(18px, 2vw, 22px); }
+  .sector p { margin: 12px 0 0; font-size: 15px; line-height: 1.55; color: var(--grisOsc); }
+
+  /* ---------- Cierre ---------- */
+  .cierre {
+    min-height: 100svh; display: flex; align-items: center;
+    background:
+      radial-gradient(760px 420px at 50% 100%, rgba(34,211,238,.16), transparent 62%),
+      var(--negro);
+  }
+  .creditos {
+    border-top: 1px solid var(--lineaInv);
+    padding: 36px 24px; background: var(--negro); color: var(--gris);
+    font-size: 13px;
+  }
+  .creditos .lienzo {
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+
+  /* ---------- Aparición al hacer scroll ---------- */
+  .rev {
+    opacity: 0; transform: translateY(26px);
+    transition: opacity .9s var(--easing), transform .9s var(--easing);
+    transition-delay: var(--d, 0ms);
+    will-change: opacity, transform;
+  }
+  .rev.visible { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .rev { opacity: 1; transform: none; transition: none; }
+    .flecha .linea, .cursorBlink { animation: none; }
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 900px) {
+    .trio, .sectores { grid-template-columns: 1fr; }
+    .sectores { gap: 1px; }
+    .escalera { grid-template-columns: repeat(2, 1fr); }
+    .rejilla { grid-template-columns: 1fr; }
+    .par { grid-template-columns: 1fr; gap: 14px; }
+    .modulo { grid-template-columns: 44px 1fr; }
+    .modulo p { grid-column: 2; }
+    section { padding: 14vh 20px; }
+  }
+  @media (max-width: 560px) {
+    .escalera { grid-template-columns: 1fr; }
+    .trio { gap: 44px; }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="progreso" id="progreso" aria-hidden="true"></div>
+
+<header class="marca">
+  <span><b>CoreLab</b></span>
+  <span>Hackathon 2026 · UAH</span>
+</header>
+
+<main>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero oscura">
+    <div class="lienzo">
+      <p class="eyebrow rev">Simulador interactivo de ingeniería</p>
+      <h1 class="rev" style="--d:120ms">Aprender no debería <span class="degradado">pesar</span> tanto.</h1>
+      <p class="lead rev" style="--d:260ms">
+        CoreLab convierte el temario en algo que se resuelve.
+      </p>
+    </div>
+    <div class="flecha rev" style="--d:600ms">
+      <span class="linea"></span>
+    </div>
+  </section>
+
+  <!-- ===================== 01 · EL PROBLEMA ===================== -->
+  <section class="declaracion clara">
+    <div class="lienzo">
+      <p class="indice rev"><span class="n">01</span>El problema</p>
+      <h2 class="rev" style="--d:100ms">
+        La información no falta.<br><span class="tenue">Sobra.</span>
+      </h2>
+      <p class="lead rev" style="--d:220ms">
+        Nadie se pierde por falta de material. Se pierde porque lo importante
+        está enterrado bajo lo que no lo es.
+      </p>
+    </div>
+  </section>
+
+  <section class="clara" style="padding-top:0">
+    <div class="lienzo">
+
+      <p class="etiquetaGrupo rev" style="margin-top:0">Lo que vive un estudiante</p>
+      <div class="rejilla">
+        <div class="celda rev">
+          <span class="marcaAgua">Sobrecarga</span>
+          <h3>300 diapositivas para 3 ideas.</h3>
+          <p>El esfuerzo se va en filtrar, no en entender.</p>
+        </div>
+        <div class="celda rev" style="--d:90ms">
+          <span class="marcaAgua">Teoría sin contacto</span>
+          <h3>Se aprueba, no se aprende.</h3>
+          <p>Nunca llegas a tocar el sistema del que hablas.</p>
+        </div>
+        <div class="celda rev" style="--d:180ms">
+          <span class="marcaAgua">Feedback tardío</span>
+          <h3>Descubres el fallo en el examen.</h3>
+          <p>Semanas entre equivocarse y enterarse.</p>
+        </div>
+        <div class="celda rev" style="--d:270ms">
+          <span class="marcaAgua">Motivación</span>
+          <h3>Nada invita a volver mañana.</h3>
+          <p>El PDF no te espera. No pasa nada si lo dejas.</p>
+        </div>
+      </div>
+
+      <p class="etiquetaGrupo rev">Lo que vive un empleado</p>
+      <div class="rejilla">
+        <div class="celda rev">
+          <span class="marcaAgua">Onboarding</span>
+          <h3>200 páginas el primer día.</h3>
+          <p>Se firma como leído. No se lee.</p>
+        </div>
+        <div class="celda rev" style="--d:90ms">
+          <span class="marcaAgua">Formación obligatoria</span>
+          <h3>Siguiente, siguiente, aceptar.</h3>
+          <p>Se certifica la asistencia, no el conocimiento.</p>
+        </div>
+        <div class="celda rev" style="--d:180ms">
+          <span class="marcaAgua">Conocimiento tácito</span>
+          <h3>Lo sabe una persona. Solo una.</h3>
+          <p>Si esa persona se va, el criterio se va con ella.</p>
+        </div>
+        <div class="celda rev" style="--d:270ms">
+          <span class="marcaAgua">Medición</span>
+          <h3>Nadie sabe quién sabe qué.</h3>
+          <p>Hay listas de asistencia. No hay señal.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="declaracion oscura">
+    <div class="lienzo">
+      <h2 class="rev">
+        El problema no es<br>el contenido.<br>
+        <span class="degradado">Es el formato.</span>
+      </h2>
+    </div>
+  </section>
+
+  <!-- ===================== 02 · LA IDEA ===================== -->
+  <section class="declaracion hueso">
+    <div class="lienzo">
+      <p class="indice rev"><span class="n">02</span>La idea</p>
+      <h2 class="rev" style="--d:100ms">
+        ¿Y si el temario fuera<br>un incidente que<br>hay que resolver?
+      </h2>
+    </div>
+  </section>
+
+  <section class="hueso" style="padding-top:0">
+    <div class="lienzo">
+      <div class="trio">
+        <div class="rev">
+          <span class="num">01</span>
+          <h3>Un incidente, no un tema.</h3>
+          <p>Cada concepto llega como una avería con alguien esperando el diagnóstico.</p>
+        </div>
+        <div class="rev" style="--d:110ms">
+          <span class="num">02</span>
+          <h3>Escribes, no eliges.</h3>
+          <p>Primero respondes de memoria. El test es la red de seguridad, no el atajo.</p>
+        </div>
+        <div class="rev" style="--d:220ms">
+          <span class="num">03</span>
+          <h3>Certificas, no apruebas.</h3>
+          <p>El progreso es una carrera técnica, no una nota al final del cuatrimestre.</p>
+        </div>
+      </div>
+
+      <div class="cadena">
+        <span class="paso rev">Temario</span>
+        <span class="sep rev" style="--d:60ms">→</span>
+        <span class="paso rev" style="--d:120ms">Incidente</span>
+        <span class="sep rev" style="--d:180ms">→</span>
+        <span class="paso rev" style="--d:240ms">Diagnóstico</span>
+        <span class="sep rev" style="--d:300ms">→</span>
+        <span class="paso destaca rev" style="--d:360ms">Certificación</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 03 · EL PROYECTO ===================== -->
+  <section class="oscura">
+    <div class="lienzo">
+      <p class="indice rev"><span class="n">03</span>El proyecto</p>
+      <h2 class="rev" style="--d:100ms">Esto es lo que<br>hemos construido.</h2>
+      <p class="lead rev" style="--d:220ms">
+        CoreLab. Una planta industrial que falla, y tú de guardia.
+      </p>
+
+      <!-- Maqueta del panel real del simulador -->
+      <div class="maqueta rev" style="--d:320ms">
+        <div class="top">
+          <span class="punto"></span><span class="punto"></span><span class="punto on"></span>
+          <span>Panel de diagnóstico · Módulo 1</span>
+        </div>
+        <div class="cuerpo">
+          <div class="filaEstado">
+            <span class="chip">Módulo: Infraestructura Física</span>
+            <span class="chip cian">Certificación: Técnico Junior</span>
+            <span class="chip ambar">BOT-01</span>
+            <span style="margin-left:auto">incidente 1/4 · XP 150</span>
+          </div>
+          <div class="barra"><i></i></div>
+          <p class="reto">¿Qué dispositivo actúa como el «cerebro» directo de la maquinaria en la planta?</p>
+          <div class="promptLinea">
+            <b>&gt;</b> Escribe tu diagnóstico<span class="cursorBlink"></span>
+          </div>
+          <p class="pie">[ ! ] Si fallas, se abre el modo contingencia: 4 opciones. Nunca te quedas fuera.</p>
+        </div>
+      </div>
+
+      <!-- 5 módulos -->
+      <p class="etiquetaGrupo rev">Cinco módulos</p>
+      <div class="modulos">
+        <div class="modulo rev">
+          <span class="m">01</span>
+          <h3>Infraestructura Física</h3>
+          <p>Sensores, PLC, actuadores y SCADA. Las piezas que mueven la planta.</p>
+        </div>
+        <div class="modulo rev" style="--d:80ms">
+          <span class="m">02</span>
+          <h3>Redes Industriales</h3>
+          <p>Direcciones IP, segmentación y la frontera entre IT y OT.</p>
+        </div>
+        <div class="modulo rev" style="--d:160ms">
+          <span class="m">03</span>
+          <h3>Protocolos OT</h3>
+          <p>Modbus, OPC UA, IEC 104. Los idiomas con los que hablan las máquinas.</p>
+        </div>
+        <div class="modulo rev" style="--d:240ms">
+          <span class="m">04</span>
+          <h3>Diagnóstico de Averías</h3>
+          <p>Capa física, red y aplicación. El método del técnico de guardia.</p>
+        </div>
+        <div class="modulo rev" style="--d:320ms">
+          <span class="m">05</span>
+          <h3>Ciberseguridad Industrial</h3>
+          <p>Disponibilidad y seguridad física. Detectar la intrusión antes del daño.</p>
+        </div>
+      </div>
+
+      <!-- Escalera de certificaciones -->
+      <p class="etiquetaGrupo rev">Cuatro certificaciones por módulo</p>
+      <div class="escalera">
+        <div class="rango rev">
+          <span class="lvl">Nivel 1</span>
+          <strong>Técnico Junior</strong>
+          <span class="dif">Incidentes básicos</span>
+        </div>
+        <div class="rango rev" style="--d:90ms">
+          <span class="lvl">Nivel 2</span>
+          <strong>Operador Certificado</strong>
+          <span class="dif">Incidentes críticos</span>
+        </div>
+        <div class="rango rev" style="--d:180ms">
+          <span class="lvl">Nivel 3</span>
+          <strong>Ingeniero de Sistemas</strong>
+          <span class="dif">Fallos mayores</span>
+        </div>
+        <div class="rango rev" style="--d:270ms">
+          <span class="lvl">Nivel final</span>
+          <strong>Arquitecto de Infraestructura</strong>
+          <span class="dif">Certificación final</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Problema → decisión de diseño ===================== -->
+  <section class="declaracion clara">
+    <div class="lienzo">
+      <h2 class="rev">Cada problema,<br>una decisión<br>de diseño.</h2>
+    </div>
+  </section>
+
+  <section class="clara" style="padding-top:0">
+    <div class="lienzo pares">
+      <div class="par rev">
+        <div class="izq">Sobrecarga de información</div>
+        <div class="der">
+          <strong>Briefing de un párrafo</strong>
+          <span>Toda la teoría del módulo cabe en una pantalla. Y solo aparece si la pides.</span>
+        </div>
+      </div>
+      <div class="par rev">
+        <div class="izq">Teoría sin contacto</div>
+        <div class="der">
+          <strong>El incidente es el enunciado</strong>
+          <span>Diagnosticas una estación de bombeo caída, no recitas una definición.</span>
+        </div>
+      </div>
+      <div class="par rev">
+        <div class="izq">Feedback tardío</div>
+        <div class="der">
+          <strong>Respuesta en el mismo segundo</strong>
+          <span>Aciertas y sabes por qué. Fallas y sabes por qué. Sin esperar al examen.</span>
+        </div>
+      </div>
+      <div class="par rev">
+        <div class="izq">Fallar te expulsa</div>
+        <div class="der">
+          <strong>Modo contingencia</strong>
+          <span>Si el diagnóstico escrito falla, bajan cuatro opciones. Sigues aprendiendo, no abandonas.</span>
+        </div>
+      </div>
+      <div class="par rev">
+        <div class="izq">Nada invita a volver</div>
+        <div class="der">
+          <strong>XP, logros y ligas</strong>
+          <span>Progreso visible y comparable. Una razón para abrirlo mañana.</span>
+        </div>
+      </div>
+      <div class="par rev">
+        <div class="izq">Nadie sabe quién sabe qué</div>
+        <div class="der">
+          <strong>Certificación por módulo</strong>
+          <span>El avance deja rastro: se ve quién domina qué, y a qué nivel.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 04 · MÁS ALLÁ DEL AULA ===================== -->
+  <section class="declaracion oscura">
+    <div class="lienzo">
+      <p class="indice rev"><span class="n">04</span>Más allá del aula</p>
+      <h2 class="rev" style="--d:100ms">
+        El motor no sabe<br>de qué va<br><span class="degradado">el temario.</span>
+      </h2>
+      <p class="lead rev" style="--d:220ms">
+        Cambia el banco de incidentes y cambias de sector.
+        La mecánica es exactamente la misma.
+      </p>
+    </div>
+  </section>
+
+  <section class="hueso">
+    <div class="lienzo">
+      <h3 class="rev" style="font-size:clamp(20px,2.4vw,28px)">Mismo motor. Cualquier ámbito.</h3>
+      <div class="sectores">
+        <div class="sector rev">
+          <h3>Ingeniería y planta</h3>
+          <p>Averías reales, protocolos y seguridad industrial. El caso que ya construimos.</p>
+        </div>
+        <div class="sector rev" style="--d:80ms">
+          <h3>Gestión de proyectos</h3>
+          <p>Riesgos, desviaciones y decisiones de alcance como incidentes que hay que resolver.</p>
+        </div>
+        <div class="sector rev" style="--d:160ms">
+          <h3>Onboarding</h3>
+          <p>La primera semana convertida en casos, en lugar de un manual sin leer.</p>
+        </div>
+        <div class="sector rev" style="--d:240ms">
+          <h3>Cumplimiento y seguridad</h3>
+          <p>Protocolos que se practican bajo presión, no que se firman en un formulario.</p>
+        </div>
+        <div class="sector rev" style="--d:320ms">
+          <h3>Comercial y producto</h3>
+          <p>Objeciones de cliente y escenarios de negociación como retos con respuesta.</p>
+        </div>
+        <div class="sector rev" style="--d:400ms">
+          <h3>Cualquier equipo</h3>
+          <p>Donde hay criterio experto, hay incidentes con los que transmitirlo.</p>
+        </div>
+      </div>
+
+      <div class="cadena">
+        <span class="paso rev">Conocimiento experto</span>
+        <span class="sep rev" style="--d:60ms">→</span>
+        <span class="paso rev" style="--d:120ms">Banco de incidentes</span>
+        <span class="sep rev" style="--d:180ms">→</span>
+        <span class="paso destaca rev" style="--d:240ms">Equipo certificado</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CIERRE ===================== -->
+  <section class="cierre oscura">
+    <div class="lienzo">
+      <h2 class="rev">
+        Que el trabajo<br><span class="degradado">no parezca trabajo.</span>
+      </h2>
+      <p class="lead rev" style="--d:200ms">
+        Aprender lo que importa. Sin el papeleo alrededor.
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="creditos">
+  <div class="lienzo">
+    <span><b style="color:#F5F5F7">CoreLab</b> · Simulador interactivo de ingeniería</span>
+    <span>Hackathon 2026 · Universidad de Alcalá</span>
+  </div>
+</footer>
+
+<script>
+  "use strict";
+
+  /* ---------- Aparición progresiva al deslizar ---------- */
+  var elementos = document.querySelectorAll(".rev");
+
+  if ("IntersectionObserver" in window) {
+    var observador = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (entrada) {
+        if (entrada.isIntersecting) {
+          entrada.target.classList.add("visible");
+          observador.unobserve(entrada.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: "0px 0px -8% 0px" });
+
+    elementos.forEach(function (el) { observador.observe(el); });
+  } else {
+    // Navegadores sin soporte: se muestra todo sin animación.
+    elementos.forEach(function (el) { el.classList.add("visible"); });
+  }
+
+  /* ---------- Barra de progreso de lectura ---------- */
+  var barra = document.getElementById("progreso");
+  var ticking = false;
+
+  function pintarProgreso() {
+    var alto = document.documentElement.scrollHeight - window.innerHeight;
+    var pct = alto > 0 ? (window.scrollY / alto) * 100 : 0;
+    barra.style.width = Math.min(100, Math.max(0, pct)) + "%";
+    ticking = false;
+  }
+
+  window.addEventListener("scroll", function () {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(pintarProgreso);
+    }
+  }, { passive: true });
+
+  pintarProgreso();
+</script>
+
+</body>
+</html>
