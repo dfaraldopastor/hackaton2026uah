@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>ShellAcademy — Aprende Linux jugando</title>
+<meta name="description" content="Plataforma gamificada para aprender Linux y programación desde cero a través de salas y retos interactivos." />
+
+<!-- Tipografías vía Google Fonts CDN (sin instalación local) -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+<!-- Tailwind CSS vía CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          bg: "#0A0C0A",
+          surface: "#121513",
+          panel: "#171A18",
+          edge: "#262B27",
+          hi: "#E8EDE9",
+          lo: "#8A968D",
+          neon: "#39FF6A",
+          neonDim: "#1FA34A",
+          warn: "#FFC857",
+        },
+        fontFamily: {
+          display: ['"JetBrains Mono"', "monospace"],
+          mono: ['"JetBrains Mono"', "monospace"],
+          body: ['"IBM Plex Sans"', "sans-serif"],
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  /* Patrón de puntos sutil de fondo (efecto "grid/circuito") solo en el hero */
+  .bg-dot-grid {
+    background-image: radial-gradient(rgba(57, 255, 106, 0.10) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+  /* Líneas de scanline tipo monitor CRT */
+  .scanlines::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.02) 0px,
+      rgba(255, 255, 255, 0.02) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  }
+  /* Evita que los dígitos "bailen" de anchura al cambiar los números de las métricas */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  /* Cursor parpadeante del prompt */
+  @keyframes blink { 0%, 49% { opacity: 1 } 50%, 100% { opacity: 0 } }
+  .cursor { animation: blink 1.1s step-end infinite; }
+  .glow { text-shadow: 0 0 12px rgba(57, 255, 106, 0.45); }
+</style>
+</head>
+
+<body class="bg-bg text-hi font-body antialiased">
+
+  <!-- ======================= NAVBAR ======================= -->
+  <header class="sticky top-0 z-50 border-b border-edge bg-bg/80 backdrop-blur">
+    <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <a href="#" class="flex items-center gap-2 rounded-sm font-display text-lg font-bold tracking-tight text-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon">
+        <!-- Prompt de terminal como logotipo -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#39FF6A" stroke-width="2" aria-hidden="true">
+          <rect x="2.5" y="3.5" width="19" height="17" rx="3" stroke-linejoin="round"/>
+          <path d="M7 9l3 3-3 3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M13 15h4" stroke-linecap="round"/>
+        </svg>
+        Shell<span class="text-neon">Academy</span>
+      </a>
+      <div class="flex items-center gap-8 font-mono text-sm text-lo">
+        <a href="#salas" class="rounded-sm transition-colors hover:text-neon focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon">./salas</a>
+        <a href="#reto" class="rounded-sm transition-colors hover:text-neon focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon">./reto</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ======================= HERO ======================= -->
+    <section class="relative overflow-hidden bg-dot-grid">
+      <!-- Resplandor decorativo — único acento grande de la página, no lo dupliques en otras secciones -->
+      <div class="pointer-events-none absolute -top-32 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-neon/20 blur-3xl" aria-hidden="true"></div>
+
+      <div class="relative mx-auto max-w-6xl px-6 pt-28 pb-24 md:pt-36 md:pb-32">
+        <div class="max-w-2xl">
+          <p class="mb-6 inline-flex items-center gap-2 rounded-full border border-edge bg-surface/70 px-3 py-1 font-mono text-xs text-neon">
+            <span class="h-1.5 w-1.5 rounded-full bg-neon"></span>
+            root@shellacademy:~$ whoami
+          </p>
+          <h1 class="font-display text-5xl font-bold leading-tight tracking-tight text-hi md:text-6xl">
+            Shell<span class="text-neon glow">Academy</span><span class="cursor text-neon">_</span>
+          </h1>
+          <p class="mt-6 max-w-lg text-lg text-lo">
+            Aprende Linux y programación desde cero a través de retos interactivos:
+            supera salas, captura flags y sube de nivel comando a comando.
+          </p>
+          <div class="mt-10 flex flex-wrap items-center gap-4">
+            <a href="#reto" class="inline-flex items-center rounded-lg bg-neon px-6 py-3 font-mono text-sm font-bold text-bg transition-colors hover:bg-neonDim hover:text-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
+              &gt; Empezar Sala 1
+            </a>
+            <a href="#salas" class="inline-flex items-center rounded-lg border border-edge px-6 py-3 font-mono text-sm text-lo transition-colors hover:border-neon hover:text-neon focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
+              Ver rutas
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= RUTAS DE APRENDIZAJE (3 salas) ======================= -->
+    <section id="salas" class="border-t border-edge bg-bg">
+      <div class="mx-auto max-w-6xl px-6 py-20 md:py-28">
+        <h2 class="font-display text-2xl font-bold tracking-tight text-hi">
+          <span class="text-neon">##</span> Rutas de aprendizaje
+        </h2>
+        <p class="mt-3 max-w-xl text-sm text-lo">Tres salas disponibles. Cada una combina teoría breve y un reto práctico con flag.</p>
+
+        <div class="mt-10 grid gap-6 md:grid-cols-3">
+
+          <!-- Sala 1 -->
+          <div class="rounded-xl border border-neon/40 bg-surface p-6 transition-colors hover:border-neon">
+            <div class="mb-5 h-0.5 w-10 rounded-full bg-neon"></div>
+            <div class="mb-4 flex items-center justify-between">
+              <div class="text-neon">
+                <!-- Icono terminal -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <rect x="2.5" y="4" width="19" height="16" rx="2.5" stroke-linejoin="round"/>
+                  <path d="M6.5 9.5l3 2.5-3 2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M12.5 15h5" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="rounded-full border border-neon/40 bg-neon/10 px-2.5 py-0.5 font-mono text-[11px] text-neon">Nivel 1</span>
+            </div>
+            <h3 class="font-display text-lg font-bold text-hi">Sala 1 · Navegación Básica</h3>
+            <p class="mt-1 font-mono text-xs text-neon">ls · cd · cat</p>
+            <p class="mt-3 text-sm leading-relaxed text-lo">Muévete por el sistema de archivos, lista directorios y lee ficheros ocultos como en los primeros niveles de Bandit.</p>
+            <p class="mt-5 font-mono text-xs text-lo">4 retos · 200 XP</p>
+          </div>
+
+          <!-- Sala 2 -->
+          <div class="rounded-xl border border-edge bg-surface p-6 transition-colors hover:border-neon">
+            <div class="mb-5 h-0.5 w-10 rounded-full bg-neonDim"></div>
+            <div class="mb-4 flex items-center justify-between">
+              <div class="text-neonDim">
+                <!-- Icono candado/permisos -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <rect x="4" y="10" width="16" height="10" rx="2" stroke-linejoin="round"/>
+                  <path d="M8 10V7a4 4 0 0 1 8 0v3" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M12 14v2.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="rounded-full border border-edge bg-panel px-2.5 py-0.5 font-mono text-[11px] text-lo">Nivel 2</span>
+            </div>
+            <h3 class="font-display text-lg font-bold text-hi">Sala 2 · Gestión de Permisos</h3>
+            <p class="mt-1 font-mono text-xs text-neon">chmod · chown · sudo</p>
+            <p class="mt-3 text-sm leading-relaxed text-lo">Entiende usuarios, grupos y el sistema rwx. Aprende a leer un <code class="text-hi">-rwxr-xr--</code> sin dudar.</p>
+            <p class="mt-5 font-mono text-xs text-lo">5 retos · 300 XP</p>
+          </div>
+
+          <!-- Sala 3 -->
+          <div class="rounded-xl border border-edge bg-surface p-6 transition-colors hover:border-neon">
+            <div class="mb-5 h-0.5 w-10 rounded-full bg-neonDim"></div>
+            <div class="mb-4 flex items-center justify-between">
+              <div class="text-neonDim">
+                <!-- Icono código -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <path d="M8.5 7.5 3 12l5.5 4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M15.5 7.5 21 12l-5.5 4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M13.5 4.5l-3 15" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="rounded-full border border-edge bg-panel px-2.5 py-0.5 font-mono text-[11px] text-lo">Nivel 3</span>
+            </div>
+            <h3 class="font-display text-lg font-bold text-hi">Sala 3 · Lógica en Python</h3>
+            <p class="mt-1 font-mono text-xs text-neon">if · for · def</p>
+            <p class="mt-3 text-sm leading-relaxed text-lo">Da el salto de la terminal al script: variables, bucles y funciones para automatizar tus propios retos.</p>
+            <p class="mt-5 font-mono text-xs text-lo">6 retos · 400 XP</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= VISTA DE RETO (dentro de la Sala 1) ======================= -->
+    <section id="reto" class="border-t border-edge bg-surface">
+      <div class="mx-auto max-w-6xl px-6 py-20 md:py-24">
+
+        <!-- Cabecera de la sala -->
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p class="font-mono text-xs text-neon">~/salas/01-navegacion-basica</p>
+            <h2 class="mt-2 font-display text-3xl font-bold tracking-tight text-hi">Sala 1 · Navegación Básica</h2>
+          </div>
+          <div class="flex items-center gap-3 font-mono text-xs text-lo">
+            <span class="rounded-full border border-edge bg-panel px-3 py-1">Reto 2 / 4</span>
+            <span class="rounded-full border border-neon/40 bg-neon/10 px-3 py-1 text-neon">+50 XP</span>
+          </div>
+        </div>
+
+        <!-- Barra de progreso -->
+        <div class="mt-6 h-1.5 w-full overflow-hidden rounded-full bg-panel">
+          <div class="h-full w-1/4 rounded-full bg-neon"></div>
+        </div>
+
+        <div class="mt-10 grid gap-6 lg:grid-cols-2">
+
+          <!-- Bloque de teoría -->
+          <article class="rounded-xl border border-edge bg-panel p-6 md:p-8">
+            <h3 class="font-display text-lg font-bold text-hi">
+              <span class="text-neon">01.</span> Teoría — Listar archivos ocultos
+            </h3>
+            <p class="mt-4 text-sm leading-relaxed text-lo">
+              El comando <code class="rounded bg-bg px-1.5 py-0.5 font-mono text-neon">ls</code> muestra el contenido de un directorio,
+              pero por defecto esconde todo lo que empieza por un punto. En Linux, esos ficheros
+              (<code class="rounded bg-bg px-1.5 py-0.5 font-mono text-hi">.bashrc</code>, <code class="rounded bg-bg px-1.5 py-0.5 font-mono text-hi">.flag</code>)
+              son archivos ocultos, y suelen ser justo los que te interesan.
+            </p>
+            <p class="mt-4 text-sm leading-relaxed text-lo">
+              Combina dos flags para verlo todo:
+              <code class="rounded bg-bg px-1.5 py-0.5 font-mono text-neon">-a</code> incluye los ocultos y
+              <code class="rounded bg-bg px-1.5 py-0.5 font-mono text-neon">-l</code> muestra el formato largo con permisos, propietario y tamaño.
+            </p>
+
+            <!-- Terminal de ejemplo -->
+            <div class="relative mt-6 overflow-hidden rounded-lg border border-edge bg-bg scanlines">
+              <div class="flex items-center gap-1.5 border-b border-edge px-4 py-2.5">
+                <span class="h-2.5 w-2.5 rounded-full bg-edge"></span>
+                <span class="h-2.5 w-2.5 rounded-full bg-edge"></span>
+                <span class="h-2.5 w-2.5 rounded-full bg-neon/60"></span>
+                <span class="ml-2 font-mono text-[11px] text-lo">bash — 80×24</span>
+              </div>
+              <pre class="overflow-x-auto px-4 py-4 font-mono text-[13px] leading-relaxed text-lo"><span class="text-neon">user@shellacademy</span>:<span class="text-hi">~/sala1</span>$ ls
+notas.txt  practica
+
+<span class="text-neon">user@shellacademy</span>:<span class="text-hi">~/sala1</span>$ ls -la
+total 16
+drwxr-xr-x 3 user user 4096 sep 18 09:12 <span class="text-hi">.</span>
+drwxr-xr-x 8 user user 4096 sep 18 09:10 <span class="text-hi">..</span>
+-rw------- 1 user user   33 sep 18 09:12 <span class="text-neon">.flag</span>
+-rw-r--r-- 1 user user   84 sep 18 09:11 notas.txt
+drwxr-xr-x 2 user user 4096 sep 18 09:11 practica</pre>
+            </div>
+
+            <div class="mt-6 rounded-lg border border-neon/30 bg-neon/5 p-4">
+              <p class="font-mono text-xs font-bold text-neon">TIP</p>
+              <p class="mt-1 text-sm text-lo">
+                Una vez localizado el fichero oculto, léelo con
+                <code class="rounded bg-bg px-1.5 py-0.5 font-mono text-hi">cat .flag</code> para obtener la flag de este reto.
+              </p>
+            </div>
+          </article>
+
+          <!-- Bloque de acción -->
+          <article class="rounded-xl border border-neon/40 bg-panel p-6 md:p-8">
+            <h3 class="font-display text-lg font-bold text-hi">
+              <span class="text-neon">02.</span> Tu turno — Envía la flag
+            </h3>
+            <p class="mt-4 text-sm leading-relaxed text-lo">
+              Entra en la máquina de prácticas, lista los archivos ocultos del directorio
+              <code class="rounded bg-bg px-1.5 py-0.5 font-mono text-hi">~/sala1</code> y escribe aquí abajo
+              el comando o la flag que encuentres.
+            </p>
+
+            <div class="mt-6 rounded-lg border border-edge bg-bg p-4">
+              <p class="font-mono text-xs text-lo">Pregunta 1</p>
+              <p class="mt-1 text-sm text-hi">¿Qué contiene el archivo oculto de la carpeta <span class="font-mono text-neon">~/sala1</span>?</p>
+            </div>
+
+            <form id="flag-form" class="mt-6" autocomplete="off">
+              <label for="flag-input" class="font-mono text-xs text-lo">Flag / comando</label>
+              <div class="mt-2 flex items-center gap-2 rounded-lg border border-edge bg-bg px-3 focus-within:border-neon">
+                <span class="font-mono text-sm text-neon">$</span>
+                <input
+                  id="flag-input"
+                  type="text"
+                  placeholder="SHELL{...} o ls -la"
+                  class="w-full bg-transparent py-3 font-mono text-sm text-hi placeholder:text-lo/60 focus:outline-none"
+                />
+              </div>
+
+              <button
+                id="submit-btn"
+                type="submit"
+                class="mt-4 w-full rounded-lg bg-neon px-6 py-3 font-mono text-sm font-bold text-bg transition-colors hover:bg-neonDim hover:text-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-panel"
+              >
+                Submit
+              </button>
+            </form>
+
+            <p id="feedback" class="mt-4 hidden font-mono text-xs text-neon">
+              &gt; Flag aceptada. Sala 1 · Reto 2 completado.
+            </p>
+
+            <div class="mt-8 flex items-center justify-between border-t border-edge pt-5 font-mono text-xs text-lo">
+              <span>Pistas disponibles: 2</span>
+              <span id="xp-counter" class="tabular text-hi">XP: 150</span>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= MÉTRICAS / ESTADÍSTICAS ======================= -->
+    <section class="border-t border-edge bg-bg">
+      <div class="mx-auto max-w-6xl px-6 py-20 md:py-24">
+        <div class="grid grid-cols-1 divide-y divide-edge md:grid-cols-3 md:divide-x md:divide-y-0">
+
+          <div class="py-6 text-center md:py-0 md:px-8">
+            <p class="tabular font-display text-5xl font-bold text-neon md:text-6xl">3</p>
+            <p class="mt-2 font-mono text-sm text-lo">salas disponibles</p>
+          </div>
+
+          <div class="py-6 text-center md:py-0 md:px-8">
+            <p class="tabular font-display text-5xl font-bold text-neon md:text-6xl">15</p>
+            <p class="mt-2 font-mono text-sm text-lo">retos interactivos</p>
+          </div>
+
+          <div class="py-6 text-center md:py-0 md:px-8">
+            <p class="tabular font-display text-5xl font-bold text-neon md:text-6xl">900</p>
+            <p class="mt-2 font-mono text-sm text-lo">XP por conseguir</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======================= FOOTER ======================= -->
+  <footer class="border-t border-edge bg-bg">
+    <div class="mx-auto max-w-6xl px-6 py-10">
+      <div class="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+        <p class="font-display text-sm font-bold text-hi">Shell<span class="text-neon">Academy</span></p>
+        <p class="font-mono text-sm text-lo">© 2026 ShellAcademy. Proyecto de hackathon.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ======================= DEMO: feedback visual del botón Submit ======================= -->
+  <!-- Solo efecto visual: no valida nada ni hace peticiones. -->
+  <script>
+    (function () {
+      var form = document.getElementById("flag-form");
+      var btn = document.getElementById("submit-btn");
+      var feedback = document.getElementById("feedback");
+      var xp = document.getElementById("xp-counter");
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        btn.textContent = "¡Correcto! +50 XP";
+        btn.classList.remove("bg-neon", "text-bg", "hover:bg-neonDim", "hover:text-hi");
+        btn.classList.add("bg-neonDim", "text-hi", "ring-2", "ring-neon");
+
+        feedback.classList.remove("hidden");
+        xp.textContent = "XP: 200";
+      });
+    })();
+  </script>
+
+</body>
+</html>

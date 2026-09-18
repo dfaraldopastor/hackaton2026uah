@@ -4,13 +4,12 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<title>ShellAcademy — Aprende Linux jugando</title>
-<meta name="description" content="Plataforma gamificada para aprender Linux y programación desde cero a través de salas y retos interactivos." />
+<title>ShellAcademy — Fundamentos Industriales</title>
+<meta name="description" content="Plataforma gamificada para aprender automatización industrial, redes y ciberseguridad superando retos en una terminal." />
 
-<!-- Tipografías vía Google Fonts CDN (sin instalación local) -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 
 <!-- Tailwind CSS vía CDN -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -27,12 +26,11 @@
           lo: "#8A968D",
           neon: "#39FF6A",
           neonDim: "#1FA34A",
-          warn: "#FFC857",
+          danger: "#FF5C5C",
+          tesla: "#7DD3FC",
         },
         fontFamily: {
-          display: ['"JetBrains Mono"', "monospace"],
-          mono: ['"JetBrains Mono"', "monospace"],
-          body: ['"IBM Plex Sans"', "sans-serif"],
+          mono: ['"JetBrains Mono"', "ui-monospace", "monospace"],
         },
       },
     },
@@ -40,12 +38,10 @@
 </script>
 
 <style>
-  /* Patrón de puntos sutil de fondo (efecto "grid/circuito") solo en el hero */
   .bg-dot-grid {
-    background-image: radial-gradient(rgba(57, 255, 106, 0.10) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(57, 255, 106, 0.09) 1px, transparent 1px);
     background-size: 22px 22px;
   }
-  /* Líneas de scanline tipo monitor CRT */
   .scanlines::after {
     content: "";
     position: absolute;
@@ -53,324 +49,1149 @@
     pointer-events: none;
     background: repeating-linear-gradient(
       to bottom,
-      rgba(255, 255, 255, 0.02) 0px,
-      rgba(255, 255, 255, 0.02) 1px,
+      rgba(255, 255, 255, 0.025) 0px,
+      rgba(255, 255, 255, 0.025) 1px,
       transparent 1px,
       transparent 3px
     );
   }
-  /* Evita que los dígitos "bailen" de anchura al cambiar los números de las métricas */
-  .tabular {
-    font-variant-numeric: tabular-nums;
-  }
-  /* Cursor parpadeante del prompt */
   @keyframes blink { 0%, 49% { opacity: 1 } 50%, 100% { opacity: 0 } }
   .cursor { animation: blink 1.1s step-end infinite; }
-  .glow { text-shadow: 0 0 12px rgba(57, 255, 106, 0.45); }
+
+  @keyframes popIn {
+    0%   { transform: scale(0.88) translateY(12px); opacity: 0 }
+    60%  { transform: scale(1.02) translateY(0);    opacity: 1 }
+    100% { transform: scale(1)    translateY(0);    opacity: 1 }
+  }
+  .pop-in { animation: popIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+  @keyframes shake {
+    10%, 90% { transform: translateX(-2px) }
+    20%, 80% { transform: translateX(3px) }
+    30%, 50%, 70% { transform: translateX(-5px) }
+    40%, 60% { transform: translateX(5px) }
+  }
+  .shake { animation: shake 0.45s both; }
+
+  .glow { text-shadow: 0 0 14px rgba(57, 255, 106, 0.55); }
+  .glow-box { box-shadow: 0 0 0 1px rgba(57,255,106,.35), 0 0 42px rgba(57,255,106,.28); }
+  .tabular { font-variant-numeric: tabular-nums; }
+
+  #terminal-log { scrollbar-width: thin; scrollbar-color: #262B27 transparent; }
+  #terminal-log::-webkit-scrollbar { width: 6px; }
+  #terminal-log::-webkit-scrollbar-thumb { background: #262B27; border-radius: 3px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cursor, .pop-in, .shake { animation: none !important; }
+  }
 </style>
 </head>
 
-<body class="bg-bg text-hi font-body antialiased">
+<body class="min-h-screen bg-bg bg-dot-grid font-mono text-hi antialiased">
 
-  <!-- ======================= NAVBAR ======================= -->
-  <header class="sticky top-0 z-50 border-b border-edge bg-bg/80 backdrop-blur">
-    <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-      <a href="#" class="flex items-center gap-2 rounded-sm font-display text-lg font-bold tracking-tight text-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon">
-        <!-- Prompt de terminal como logotipo -->
+  <!-- ======================= BARRA SUPERIOR ======================= -->
+  <header class="border-b border-edge bg-bg/85 backdrop-blur">
+    <div class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-4">
+      <div class="flex items-center gap-2 text-lg font-bold tracking-tight">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#39FF6A" stroke-width="2" aria-hidden="true">
           <rect x="2.5" y="3.5" width="19" height="17" rx="3" stroke-linejoin="round"/>
           <path d="M7 9l3 3-3 3" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M13 15h4" stroke-linecap="round"/>
         </svg>
         Shell<span class="text-neon">Academy</span>
-      </a>
-      <div class="flex items-center gap-8 font-mono text-sm text-lo">
-        <a href="#salas" class="rounded-sm transition-colors hover:text-neon focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon">./salas</a>
-        <a href="#reto" class="rounded-sm transition-colors hover:text-neon focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon">./reto</a>
       </div>
-    </nav>
-  </header>
-
-  <main>
-    <!-- ======================= HERO ======================= -->
-    <section class="relative overflow-hidden bg-dot-grid">
-      <!-- Resplandor decorativo — único acento grande de la página, no lo dupliques en otras secciones -->
-      <div class="pointer-events-none absolute -top-32 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-neon/20 blur-3xl" aria-hidden="true"></div>
-
-      <div class="relative mx-auto max-w-6xl px-6 pt-28 pb-24 md:pt-36 md:pb-32">
-        <div class="max-w-2xl">
-          <p class="mb-6 inline-flex items-center gap-2 rounded-full border border-edge bg-surface/70 px-3 py-1 font-mono text-xs text-neon">
-            <span class="h-1.5 w-1.5 rounded-full bg-neon"></span>
-            root@shellacademy:~$ whoami
-          </p>
-          <h1 class="font-display text-5xl font-bold leading-tight tracking-tight text-hi md:text-6xl">
-            Shell<span class="text-neon glow">Academy</span><span class="cursor text-neon">_</span>
-          </h1>
-          <p class="mt-6 max-w-lg text-lg text-lo">
-            Aprende Linux y programación desde cero a través de retos interactivos:
-            supera salas, captura flags y sube de nivel comando a comando.
-          </p>
-          <div class="mt-10 flex flex-wrap items-center gap-4">
-            <a href="#reto" class="inline-flex items-center rounded-lg bg-neon px-6 py-3 font-mono text-sm font-bold text-bg transition-colors hover:bg-neonDim hover:text-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
-              &gt; Empezar Sala 1
-            </a>
-            <a href="#salas" class="inline-flex items-center rounded-lg border border-edge px-6 py-3 font-mono text-sm text-lo transition-colors hover:border-neon hover:text-neon focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
-              Ver rutas
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======================= RUTAS DE APRENDIZAJE (3 salas) ======================= -->
-    <section id="salas" class="border-t border-edge bg-bg">
-      <div class="mx-auto max-w-6xl px-6 py-20 md:py-28">
-        <h2 class="font-display text-2xl font-bold tracking-tight text-hi">
-          <span class="text-neon">##</span> Rutas de aprendizaje
-        </h2>
-        <p class="mt-3 max-w-xl text-sm text-lo">Tres salas disponibles. Cada una combina teoría breve y un reto práctico con flag.</p>
-
-        <div class="mt-10 grid gap-6 md:grid-cols-3">
-
-          <!-- Sala 1 -->
-          <div class="rounded-xl border border-neon/40 bg-surface p-6 transition-colors hover:border-neon">
-            <div class="mb-5 h-0.5 w-10 rounded-full bg-neon"></div>
-            <div class="mb-4 flex items-center justify-between">
-              <div class="text-neon">
-                <!-- Icono terminal -->
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                  <rect x="2.5" y="4" width="19" height="16" rx="2.5" stroke-linejoin="round"/>
-                  <path d="M6.5 9.5l3 2.5-3 2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M12.5 15h5" stroke-linecap="round"/>
-                </svg>
-              </div>
-              <span class="rounded-full border border-neon/40 bg-neon/10 px-2.5 py-0.5 font-mono text-[11px] text-neon">Nivel 1</span>
-            </div>
-            <h3 class="font-display text-lg font-bold text-hi">Sala 1 · Navegación Básica</h3>
-            <p class="mt-1 font-mono text-xs text-neon">ls · cd · cat</p>
-            <p class="mt-3 text-sm leading-relaxed text-lo">Muévete por el sistema de archivos, lista directorios y lee ficheros ocultos como en los primeros niveles de Bandit.</p>
-            <p class="mt-5 font-mono text-xs text-lo">4 retos · 200 XP</p>
-          </div>
-
-          <!-- Sala 2 -->
-          <div class="rounded-xl border border-edge bg-surface p-6 transition-colors hover:border-neon">
-            <div class="mb-5 h-0.5 w-10 rounded-full bg-neonDim"></div>
-            <div class="mb-4 flex items-center justify-between">
-              <div class="text-neonDim">
-                <!-- Icono candado/permisos -->
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                  <rect x="4" y="10" width="16" height="10" rx="2" stroke-linejoin="round"/>
-                  <path d="M8 10V7a4 4 0 0 1 8 0v3" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M12 14v2.5" stroke-linecap="round"/>
-                </svg>
-              </div>
-              <span class="rounded-full border border-edge bg-panel px-2.5 py-0.5 font-mono text-[11px] text-lo">Nivel 2</span>
-            </div>
-            <h3 class="font-display text-lg font-bold text-hi">Sala 2 · Gestión de Permisos</h3>
-            <p class="mt-1 font-mono text-xs text-neon">chmod · chown · sudo</p>
-            <p class="mt-3 text-sm leading-relaxed text-lo">Entiende usuarios, grupos y el sistema rwx. Aprende a leer un <code class="text-hi">-rwxr-xr--</code> sin dudar.</p>
-            <p class="mt-5 font-mono text-xs text-lo">5 retos · 300 XP</p>
-          </div>
-
-          <!-- Sala 3 -->
-          <div class="rounded-xl border border-edge bg-surface p-6 transition-colors hover:border-neon">
-            <div class="mb-5 h-0.5 w-10 rounded-full bg-neonDim"></div>
-            <div class="mb-4 flex items-center justify-between">
-              <div class="text-neonDim">
-                <!-- Icono código -->
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                  <path d="M8.5 7.5 3 12l5.5 4.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M15.5 7.5 21 12l-5.5 4.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M13.5 4.5l-3 15" stroke-linecap="round"/>
-                </svg>
-              </div>
-              <span class="rounded-full border border-edge bg-panel px-2.5 py-0.5 font-mono text-[11px] text-lo">Nivel 3</span>
-            </div>
-            <h3 class="font-display text-lg font-bold text-hi">Sala 3 · Lógica en Python</h3>
-            <p class="mt-1 font-mono text-xs text-neon">if · for · def</p>
-            <p class="mt-3 text-sm leading-relaxed text-lo">Da el salto de la terminal al script: variables, bucles y funciones para automatizar tus propios retos.</p>
-            <p class="mt-5 font-mono text-xs text-lo">6 retos · 400 XP</p>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ======================= VISTA DE RETO (dentro de la Sala 1) ======================= -->
-    <section id="reto" class="border-t border-edge bg-surface">
-      <div class="mx-auto max-w-6xl px-6 py-20 md:py-24">
-
-        <!-- Cabecera de la sala -->
-        <div class="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p class="font-mono text-xs text-neon">~/salas/01-navegacion-basica</p>
-            <h2 class="mt-2 font-display text-3xl font-bold tracking-tight text-hi">Sala 1 · Navegación Básica</h2>
-          </div>
-          <div class="flex items-center gap-3 font-mono text-xs text-lo">
-            <span class="rounded-full border border-edge bg-panel px-3 py-1">Reto 2 / 4</span>
-            <span class="rounded-full border border-neon/40 bg-neon/10 px-3 py-1 text-neon">+50 XP</span>
-          </div>
-        </div>
-
-        <!-- Barra de progreso -->
-        <div class="mt-6 h-1.5 w-full overflow-hidden rounded-full bg-panel">
-          <div class="h-full w-1/4 rounded-full bg-neon"></div>
-        </div>
-
-        <div class="mt-10 grid gap-6 lg:grid-cols-2">
-
-          <!-- Bloque de teoría -->
-          <article class="rounded-xl border border-edge bg-panel p-6 md:p-8">
-            <h3 class="font-display text-lg font-bold text-hi">
-              <span class="text-neon">01.</span> Teoría — Listar archivos ocultos
-            </h3>
-            <p class="mt-4 text-sm leading-relaxed text-lo">
-              El comando <code class="rounded bg-bg px-1.5 py-0.5 font-mono text-neon">ls</code> muestra el contenido de un directorio,
-              pero por defecto esconde todo lo que empieza por un punto. En Linux, esos ficheros
-              (<code class="rounded bg-bg px-1.5 py-0.5 font-mono text-hi">.bashrc</code>, <code class="rounded bg-bg px-1.5 py-0.5 font-mono text-hi">.flag</code>)
-              son archivos ocultos, y suelen ser justo los que te interesan.
-            </p>
-            <p class="mt-4 text-sm leading-relaxed text-lo">
-              Combina dos flags para verlo todo:
-              <code class="rounded bg-bg px-1.5 py-0.5 font-mono text-neon">-a</code> incluye los ocultos y
-              <code class="rounded bg-bg px-1.5 py-0.5 font-mono text-neon">-l</code> muestra el formato largo con permisos, propietario y tamaño.
-            </p>
-
-            <!-- Terminal de ejemplo -->
-            <div class="relative mt-6 overflow-hidden rounded-lg border border-edge bg-bg scanlines">
-              <div class="flex items-center gap-1.5 border-b border-edge px-4 py-2.5">
-                <span class="h-2.5 w-2.5 rounded-full bg-edge"></span>
-                <span class="h-2.5 w-2.5 rounded-full bg-edge"></span>
-                <span class="h-2.5 w-2.5 rounded-full bg-neon/60"></span>
-                <span class="ml-2 font-mono text-[11px] text-lo">bash — 80×24</span>
-              </div>
-              <pre class="overflow-x-auto px-4 py-4 font-mono text-[13px] leading-relaxed text-lo"><span class="text-neon">user@shellacademy</span>:<span class="text-hi">~/sala1</span>$ ls
-notas.txt  practica
-
-<span class="text-neon">user@shellacademy</span>:<span class="text-hi">~/sala1</span>$ ls -la
-total 16
-drwxr-xr-x 3 user user 4096 sep 18 09:12 <span class="text-hi">.</span>
-drwxr-xr-x 8 user user 4096 sep 18 09:10 <span class="text-hi">..</span>
--rw------- 1 user user   33 sep 18 09:12 <span class="text-neon">.flag</span>
--rw-r--r-- 1 user user   84 sep 18 09:11 notas.txt
-drwxr-xr-x 2 user user 4096 sep 18 09:11 practica</pre>
-            </div>
-
-            <div class="mt-6 rounded-lg border border-neon/30 bg-neon/5 p-4">
-              <p class="font-mono text-xs font-bold text-neon">TIP</p>
-              <p class="mt-1 text-sm text-lo">
-                Una vez localizado el fichero oculto, léelo con
-                <code class="rounded bg-bg px-1.5 py-0.5 font-mono text-hi">cat .flag</code> para obtener la flag de este reto.
-              </p>
-            </div>
-          </article>
-
-          <!-- Bloque de acción -->
-          <article class="rounded-xl border border-neon/40 bg-panel p-6 md:p-8">
-            <h3 class="font-display text-lg font-bold text-hi">
-              <span class="text-neon">02.</span> Tu turno — Envía la flag
-            </h3>
-            <p class="mt-4 text-sm leading-relaxed text-lo">
-              Entra en la máquina de prácticas, lista los archivos ocultos del directorio
-              <code class="rounded bg-bg px-1.5 py-0.5 font-mono text-hi">~/sala1</code> y escribe aquí abajo
-              el comando o la flag que encuentres.
-            </p>
-
-            <div class="mt-6 rounded-lg border border-edge bg-bg p-4">
-              <p class="font-mono text-xs text-lo">Pregunta 1</p>
-              <p class="mt-1 text-sm text-hi">¿Qué contiene el archivo oculto de la carpeta <span class="font-mono text-neon">~/sala1</span>?</p>
-            </div>
-
-            <form id="flag-form" class="mt-6" autocomplete="off">
-              <label for="flag-input" class="font-mono text-xs text-lo">Flag / comando</label>
-              <div class="mt-2 flex items-center gap-2 rounded-lg border border-edge bg-bg px-3 focus-within:border-neon">
-                <span class="font-mono text-sm text-neon">$</span>
-                <input
-                  id="flag-input"
-                  type="text"
-                  placeholder="SHELL{...} o ls -la"
-                  class="w-full bg-transparent py-3 font-mono text-sm text-hi placeholder:text-lo/60 focus:outline-none"
-                />
-              </div>
-
-              <button
-                id="submit-btn"
-                type="submit"
-                class="mt-4 w-full rounded-lg bg-neon px-6 py-3 font-mono text-sm font-bold text-bg transition-colors hover:bg-neonDim hover:text-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-panel"
-              >
-                Submit
-              </button>
-            </form>
-
-            <p id="feedback" class="mt-4 hidden font-mono text-xs text-neon">
-              &gt; Flag aceptada. Sala 1 · Reto 2 completado.
-            </p>
-
-            <div class="mt-8 flex items-center justify-between border-t border-edge pt-5 font-mono text-xs text-lo">
-              <span>Pistas disponibles: 2</span>
-              <span id="xp-counter" class="tabular text-hi">XP: 150</span>
-            </div>
-          </article>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ======================= MÉTRICAS / ESTADÍSTICAS ======================= -->
-    <section class="border-t border-edge bg-bg">
-      <div class="mx-auto max-w-6xl px-6 py-20 md:py-24">
-        <div class="grid grid-cols-1 divide-y divide-edge md:grid-cols-3 md:divide-x md:divide-y-0">
-
-          <div class="py-6 text-center md:py-0 md:px-8">
-            <p class="tabular font-display text-5xl font-bold text-neon md:text-6xl">3</p>
-            <p class="mt-2 font-mono text-sm text-lo">salas disponibles</p>
-          </div>
-
-          <div class="py-6 text-center md:py-0 md:px-8">
-            <p class="tabular font-display text-5xl font-bold text-neon md:text-6xl">15</p>
-            <p class="mt-2 font-mono text-sm text-lo">retos interactivos</p>
-          </div>
-
-          <div class="py-6 text-center md:py-0 md:px-8">
-            <p class="tabular font-display text-5xl font-bold text-neon md:text-6xl">900</p>
-            <p class="mt-2 font-mono text-sm text-lo">XP por conseguir</p>
-          </div>
-
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- ======================= FOOTER ======================= -->
-  <footer class="border-t border-edge bg-bg">
-    <div class="mx-auto max-w-6xl px-6 py-10">
-      <div class="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-        <p class="font-display text-sm font-bold text-hi">Shell<span class="text-neon">Academy</span></p>
-        <p class="font-mono text-sm text-lo">© 2026 ShellAcademy. Proyecto de hackathon.</p>
+      <div class="flex flex-wrap items-center gap-3 text-xs">
+        <span id="badge-mundo" class="rounded-full border border-edge bg-panel px-3 py-1 text-lo">Mundo 1 · Sensores y Actuadores</span>
+        <span id="badge-rango" class="rounded-full border border-neon/50 bg-neon/10 px-3 py-1 font-bold text-neon">Rango Alumno</span>
+        <span id="badge-xp" class="tabular rounded-full border border-edge bg-panel px-3 py-1 font-bold text-hi">0 XP</span>
       </div>
     </div>
-  </footer>
+  </header>
 
-  <!-- ======================= DEMO: feedback visual del botón Submit ======================= -->
-  <!-- Solo efecto visual: no valida nada ni hace peticiones. -->
+  <main class="mx-auto max-w-5xl px-6 py-8 md:py-12">
+
+    <!-- ======================= SELECTOR DE MUNDO ======================= -->
+    <section aria-label="Mundos" class="mb-7">
+      <p class="mb-3 text-[11px] uppercase tracking-[0.2em] text-lo">Mundos</p>
+      <div id="lista-mundos" class="grid gap-2 sm:grid-cols-3 lg:grid-cols-5"></div>
+    </section>
+
+    <!-- ======================= ESCALERA DE RANGOS ======================= -->
+    <section aria-label="Progresión de rangos" class="mb-7">
+      <p class="mb-3 text-[11px] uppercase tracking-[0.2em] text-lo">Progresión de rango</p>
+      <ol id="lista-rangos" class="grid grid-cols-2 gap-2 text-xs md:grid-cols-4"></ol>
+    </section>
+
+    <!-- ======================= TERMINAL DE JUEGO ======================= -->
+    <section class="relative overflow-hidden rounded-xl border border-edge bg-surface scanlines">
+
+      <div class="flex items-center gap-1.5 border-b border-edge bg-panel px-4 py-2.5">
+        <span class="h-2.5 w-2.5 rounded-full bg-edge"></span>
+        <span class="h-2.5 w-2.5 rounded-full bg-edge"></span>
+        <span class="h-2.5 w-2.5 rounded-full bg-neon/60"></span>
+        <span id="titulo-ventana" class="ml-2 text-[11px] text-lo">alumno@shellacademy: ~/mundo1</span>
+      </div>
+
+      <div class="border-b border-edge px-5 py-4 md:px-7">
+        <div class="mb-2 flex items-center justify-between text-[11px] text-lo">
+          <span>Progreso del rango · reto <span id="reto-actual" class="tabular text-hi">1</span>/<span id="reto-total" class="tabular text-hi">4</span></span>
+          <span id="xp-counter" class="tabular font-bold text-neon">XP: 0</span>
+        </div>
+        <div id="barra-progreso-wrap" class="h-2 w-full overflow-hidden rounded-full bg-bg" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div id="barra-progreso" class="h-full w-0 rounded-full bg-neon transition-all duration-500 ease-out"></div>
+        </div>
+      </div>
+
+      <div id="terminal-log" class="max-h-40 overflow-y-auto px-5 py-4 text-[13px] leading-relaxed md:px-7" aria-live="polite"></div>
+
+      <div class="border-t border-edge px-5 py-7 md:px-7 md:py-9">
+        <p class="text-[11px] uppercase tracking-[0.2em] text-neon">Reto activo</p>
+        <h1 id="texto-pregunta" class="mt-3 text-lg leading-relaxed text-hi md:text-2xl">Cargando reto…</h1>
+
+        <!-- MODO 1: línea de comandos -->
+        <form id="zona-input" class="mt-7" autocomplete="off">
+          <label for="comando" class="text-[11px] text-lo">Introduce tu respuesta y pulsa Ejecutar</label>
+          <div id="input-wrap" class="mt-2 flex items-center gap-2 rounded-lg border border-edge bg-bg px-3 focus-within:border-neon">
+            <span class="text-sm font-bold text-neon" aria-hidden="true">$</span>
+            <input
+              id="comando"
+              type="text"
+              placeholder="escribe aquí tu respuesta_"
+              class="w-full bg-transparent py-3 text-sm text-hi placeholder:text-lo/60 focus:outline-none"
+            />
+          </div>
+          <button
+            type="submit"
+            class="mt-4 w-full rounded-lg bg-neon px-6 py-3 text-sm font-bold text-bg transition-colors hover:bg-neonDim hover:text-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+          >
+            &gt; Ejecutar
+          </button>
+        </form>
+
+        <!-- MODO 2: tipo test (solo tras fallar) -->
+        <div id="zona-test" class="mt-7 hidden">
+          <div class="mb-4 rounded-lg border border-danger/40 bg-danger/10 px-4 py-3">
+            <p class="text-xs font-bold text-danger">MODO ASISTIDO ACTIVADO</p>
+            <p class="mt-1 text-xs text-lo">Comando no reconocido. Consola bloqueada: selecciona la opción correcta para continuar.</p>
+          </div>
+          <div id="opciones-test" class="grid gap-3 sm:grid-cols-2" role="group" aria-label="Opciones de respuesta"></div>
+        </div>
+
+        <!-- MODO 3: rango completado -->
+        <div id="zona-fin" class="mt-7 hidden">
+          <div class="rounded-lg border border-neon/50 bg-neon/10 px-5 py-6 text-center">
+            <p class="glow text-lg font-bold text-neon">RANGO SUPERADO</p>
+            <p id="texto-fin" class="mt-2 text-xs text-lo"></p>
+            <div class="mt-5 flex flex-wrap justify-center gap-3">
+              <button id="btn-continuar" type="button" class="rounded-lg bg-neon px-5 py-2.5 text-sm font-bold text-bg transition-colors hover:bg-neonDim hover:text-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
+                Continuar
+              </button>
+              <button id="btn-repetir" type="button" class="rounded-lg border border-neon px-5 py-2.5 text-sm font-bold text-neon transition-colors hover:bg-neon hover:text-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
+                Repetir rango
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="mt-6 flex flex-wrap items-center justify-between gap-3 text-[11px] text-lo">
+      <span>ShellAcademy · 5 mundos · 49 retos · demo de hackathon</span>
+      <button id="btn-reset" type="button" class="rounded border border-edge px-3 py-1.5 transition-colors hover:border-danger hover:text-danger">
+        Reiniciar progreso
+      </button>
+    </div>
+  </main>
+
+  <!-- ======================= POP-UP DE ACIERTO ======================= -->
+  <div
+    id="modal-overlay"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 px-6 backdrop-blur-sm"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-titulo"
+  >
+    <div class="pop-in glow-box w-full max-w-md rounded-2xl border-2 border-neon bg-panel p-7 text-center md:p-9">
+      <div class="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full border-2 border-neon bg-neon/15">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#39FF6A" stroke-width="2.5" aria-hidden="true">
+          <path d="M5 12.5l4.5 4.5L19 7.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2 id="modal-titulo" class="glow text-2xl font-bold text-neon">ACCESO CONCEDIDO</h2>
+      <p id="modal-explicacion" class="mt-4 text-sm leading-relaxed text-hi"></p>
+      <p class="mt-6 text-[11px] text-lo">
+        Siguiente reto en <span id="cuenta-atras" class="tabular font-bold text-neon">3</span>s
+      </p>
+    </div>
+  </div>
+
+  <!-- ======================= LÓGICA DEL JUEGO ======================= -->
   <script>
-    (function () {
-      var form = document.getElementById("flag-form");
-      var btn = document.getElementById("submit-btn");
-      var feedback = document.getElementById("feedback");
-      var xp = document.getElementById("xp-counter");
+    "use strict";
+    /* ============================================================
+       BANCO DE PREGUNTAS — "Fundamentos Industriales"
+       Rangos: Alumno (fácil) · Profe (medio) · Experto (difícil)
+               Nikola Tesla (jefe supremo, mezcla de los 5 mundos)
+       ============================================================ */
 
-      form.addEventListener("submit", function (event) {
-        event.preventDefault();
+    /* --- Mundo 1 · Rango Alumno: set original del reto --- */
+    const preguntasMundo1 = [
+      {
+        id: 1,
+        pregunta: "¿Qué componente electrónico detecta cambios en el mundo físico, como la luz o temperatura?",
+        respuestaInput: "sensor",
+        opcionesTest: ["sensor", "actuador", "PLC", "SCADA"],
+        respuestaTest: "sensor",
+        explicacion: "¡Correcto! +50 XP. El sensor actúa como los 'sentidos' de la máquina para leer el mundo físico."
+      },
+      {
+        id: 2,
+        pregunta: "¿Qué componente recibe una orden eléctrica para ejecutar un movimiento físico?",
+        respuestaInput: "actuador",
+        opcionesTest: ["router", "firewall", "actuador", "HMI"],
+        respuestaTest: "actuador",
+        explicacion: "¡Hackeado! +50 XP. Los actuadores son los 'músculos' que ejecutan la acción, como un motor o válvula."
+      },
+      {
+        id: 3,
+        pregunta: "Si un termómetro digital marca 25°C en la fábrica, ¿actúa como sensor o actuador?",
+        respuestaInput: "sensor",
+        opcionesTest: ["actuador", "sensor", "PLC", "Switch"],
+        respuestaTest: "sensor",
+        explicacion: "¡Acceso concedido! +50 XP. Al estar midiendo una magnitud física (temperatura), su función es la de un sensor."
+      }
+    ];
 
-        btn.textContent = "¡Correcto! +50 XP";
-        btn.classList.remove("bg-neon", "text-bg", "hover:bg-neonDim", "hover:text-hi");
-        btn.classList.add("bg-neonDim", "text-hi", "ring-2", "ring-neon");
+    /* --- Resto del banco, derivado del manual --- */
+    const BANCO = {
+      1: {
+        nombre: "Sensores y Actuadores",
+        alumno: preguntasMundo1.concat([
+          {
+            id: 4,
+            pregunta: "Un botón de parada de emergencia, ¿se considera una entrada o una salida?",
+            respuestaInput: "entrada",
+            alias: ["input", "una entrada"],
+            opcionesTest: ["una salida", "una entrada", "un actuador", "una marca interna"],
+            respuestaTest: "una entrada",
+            explicacion: "¡Correcto! +50 XP. El botón informa al sistema de control, así que entra por el módulo de entradas (inputs)."
+          }
+        ]),
+        profe: [
+          {
+            id: 5,
+            pregunta: "Si un sensor solo puede decir 'Hay luz' o 'No hay luz' (0 o 1), ¿qué tipo de señal envía?",
+            respuestaInput: "digital",
+            alias: ["binaria", "senal digital", "digital o binaria"],
+            opcionesTest: ["analógica", "digital", "modulada", "determinista"],
+            respuestaTest: "digital",
+            explicacion: "¡Correcto! +50 XP. Dos estados posibles (0 o 1) significan señal digital o binaria."
+          },
+          {
+            id: 6,
+            pregunta: "Si un sensor envía mediciones continuas de presión, como 1.2 o 1.3 bares, ¿qué tipo de señal usa?",
+            respuestaInput: "analogica",
+            alias: ["analógica", "senal analogica"],
+            opcionesTest: ["digital", "binaria", "analógica", "discreta"],
+            respuestaTest: "analógica",
+            explicacion: "¡Hackeado! +50 XP. Los valores continuos y variables son propios de una señal analógica."
+          },
+          {
+            id: 7,
+            pregunta: "Nombra un actuador que usa aire comprimido para generar un movimiento rápido.",
+            respuestaInput: "cilindro neumatico",
+            alias: ["cilindro", "neumatico", "cilindro neumático", "piston neumatico"],
+            opcionesTest: ["cilindro neumático", "sensor inductivo", "variador de frecuencia", "termopar"],
+            respuestaTest: "cilindro neumático",
+            explicacion: "¡Acceso concedido! +50 XP. El cilindro neumático convierte aire comprimido en movimiento lineal rápido."
+          }
+        ],
+        experto: [
+          {
+            id: 8,
+            pregunta: "Para que el PLC entienda la señal de un sensor analógico, ¿qué conversión es obligatoria?",
+            respuestaInput: "adc",
+            alias: ["analogico-digital", "conversion analogico digital", "analogica a digital"],
+            opcionesTest: ["Conversión Analógico-Digital (ADC)", "Conversión Digital-Analógica (DAC)", "Modulación PWM", "Multiplexación"],
+            respuestaTest: "Conversión Analógico-Digital (ADC)",
+            explicacion: "¡Correcto! +50 XP. El PLC solo procesa números, así que la señal continua pasa por un ADC antes de entrar."
+          },
+          {
+            id: 9,
+            pregunta: "¿Cómo se llama el sensor que detecta metal mediante campos electromagnéticos sin tocarlo?",
+            respuestaInput: "inductivo",
+            alias: ["sensor inductivo"],
+            opcionesTest: ["sensor capacitivo", "sensor inductivo", "sensor óptico", "final de carrera"],
+            respuestaTest: "sensor inductivo",
+            explicacion: "¡Hackeado! +50 XP. El sensor inductivo detecta metales por campo electromagnético, sin contacto físico."
+          }
+        ]
+      },
 
-        feedback.classList.remove("hidden");
-        xp.textContent = "XP: 200";
+      2: {
+        nombre: "Controladores Lógicos Programables (PLC)",
+        alumno: [
+          {
+            id: 10,
+            pregunta: "¿Qué significan exactamente las siglas PLC?",
+            respuestaInput: "controlador logico programable",
+            alias: ["controlador lógico programable", "programmable logic controller"],
+            opcionesTest: ["Controlador Lógico Programable", "Panel Local de Control", "Protocolo de Línea Continua", "Procesador Lógico Central"],
+            respuestaTest: "Controlador Lógico Programable",
+            explicacion: "¡Correcto! +50 XP. PLC = Controlador Lógico Programable, el cerebro industrial de la máquina."
+          },
+          {
+            id: 11,
+            pregunta: "¿Un PLC se parece más a una consola, un ordenador industrial o un router?",
+            respuestaInput: "ordenador industrial",
+            alias: ["ordenador", "un ordenador industrial"],
+            opcionesTest: ["a una consola", "a un ordenador industrial", "a un router", "a un switch gestionable"],
+            respuestaTest: "a un ordenador industrial",
+            explicacion: "¡Hackeado! +50 XP. Es un ordenador industrial ultrarresistente: aguanta calor, polvo y vibraciones."
+          },
+          {
+            id: 12,
+            pregunta: "¿A qué módulo del PLC se conectan los cables de los botones de la máquina?",
+            respuestaInput: "entradas",
+            alias: ["entrada", "inputs", "modulo de entradas"],
+            opcionesTest: ["al módulo de Salidas", "al módulo de Entradas", "a la fuente de alimentación", "al puerto Ethernet"],
+            respuestaTest: "al módulo de Entradas",
+            explicacion: "¡Acceso concedido! +50 XP. Todo lo que informa al PLC (botones, sensores) entra por el módulo de entradas."
+          },
+          {
+            id: 13,
+            pregunta: "¿A qué módulo del PLC se conectan los cables hacia las luces y motores?",
+            respuestaInput: "salidas",
+            alias: ["salida", "outputs", "modulo de salidas"],
+            opcionesTest: ["al módulo de Entradas", "al módulo de Salidas", "al módulo de comunicaciones", "a la CPU"],
+            respuestaTest: "al módulo de Salidas",
+            explicacion: "¡Correcto! +50 XP. Los actuadores (luces, motores, válvulas) cuelgan del módulo de salidas."
+          }
+        ],
+        profe: [
+          {
+            id: 14,
+            pregunta: "El PLC lee entradas, ejecuta el programa y actualiza salidas en bucle. ¿Cómo se llama ese ciclo?",
+            respuestaInput: "ciclo de scan",
+            alias: ["scan", "ciclo de barrido", "barrido"],
+            opcionesTest: ["ciclo de Scan", "ciclo de Watchdog", "ciclo de Handshake", "ciclo de Polling"],
+            respuestaTest: "ciclo de Scan",
+            explicacion: "¡Hackeado! +50 XP. Es el ciclo de Scan o barrido: leer entradas, procesar, actualizar salidas, repetir."
+          },
+          {
+            id: 15,
+            pregunta: "¿Qué ocurre con el programa del PLC si hay un corte de luz en la fábrica?",
+            respuestaInput: "no se borra",
+            alias: ["se mantiene", "memoria no volatil", "nada", "no se pierde"],
+            opcionesTest: ["se borra por completo", "no se borra (memoria no volátil)", "vuelve a los valores de fábrica", "se corrompe siempre"],
+            respuestaTest: "no se borra (memoria no volátil)",
+            explicacion: "¡Correcto! +50 XP. El programa vive en memoria no volátil: sobrevive al corte de alimentación."
+          },
+          {
+            id: 16,
+            pregunta: "Si queremos que el PLC espere 5 segundos antes de encender un motor, ¿qué usamos?",
+            respuestaInput: "temporizador",
+            alias: ["timer", "un temporizador"],
+            opcionesTest: ["un contador", "un temporizador (Timer)", "una marca interna", "una entrada analógica"],
+            respuestaTest: "un temporizador (Timer)",
+            explicacion: "¡Acceso concedido! +50 XP. El temporizador (Timer) introduce retardos controlados en el programa."
+          }
+        ],
+        experto: [
+          {
+            id: 17,
+            pregunta: "¿Qué lenguaje de programación clásico parece un plano eléctrico con relés y contactos?",
+            respuestaInput: "ladder",
+            alias: ["lenguaje ladder", "diagrama de contactos", "escalera"],
+            opcionesTest: ["Lenguaje Ladder", "Texto Estructurado", "Grafcet", "Python"],
+            respuestaTest: "Lenguaje Ladder",
+            explicacion: "¡Correcto! +50 XP. Ladder (diagrama de contactos) imita el esquema eléctrico de relés de toda la vida."
+          },
+          {
+            id: 18,
+            pregunta: "¿Qué variable usa el PLC para 'recordar' una alarma aunque el sensor vuelva a la normalidad?",
+            respuestaInput: "marca",
+            alias: ["flag", "rele interno", "relé interno", "marca interna", "bit de memoria"],
+            opcionesTest: ["una entrada digital", "una marca o relé interno (flag)", "un temporizador", "una salida analógica"],
+            respuestaTest: "una marca o relé interno (flag)",
+            explicacion: "¡Hackeado! +50 XP. La marca interna (flag) mantiene el estado memorizado hasta que alguien la resetea."
+          },
+          {
+            id: 19,
+            pregunta: "Para leer el voltaje exacto de una batería (0 a 10V), ¿qué tipo de entrada necesita el PLC?",
+            respuestaInput: "analogica",
+            alias: ["analógica", "entrada analogica"],
+            opcionesTest: ["una entrada digital", "una entrada analógica", "una salida de relé", "un puerto serie"],
+            respuestaTest: "una entrada analógica",
+            explicacion: "¡Acceso concedido! +50 XP. Un valor continuo entre 0 y 10V exige una entrada analógica, no digital."
+          }
+        ]
+      },
+
+      3: {
+        nombre: "La Sala de Control (SCADA)",
+        alumno: [
+          {
+            id: 20,
+            pregunta: "¿Qué significan las siglas SCADA (sus tres pilares)?",
+            respuestaInput: "supervision control y adquisicion de datos",
+            alias: ["supervision control adquisicion de datos", "supervisión, control y adquisición de datos"],
+            opcionesTest: ["Supervisión, Control y Adquisición de Datos", "Sistema Central de Alarmas y Datos", "Servicio de Control Automático de Accesos", "Sistema de Cableado y Distribución"],
+            respuestaTest: "Supervisión, Control y Adquisición de Datos",
+            explicacion: "¡Correcto! +50 XP. SCADA = Supervisión, Control y Adquisición de Datos de toda la planta."
+          },
+          {
+            id: 21,
+            pregunta: "Si la caldera supera los 90°C y parpadea un icono rojo pitando, ¿qué ha saltado?",
+            respuestaInput: "alarma",
+            alias: ["una alarma"],
+            opcionesTest: ["una alarma", "un historian", "un temporizador", "un ciclo de scan"],
+            respuestaTest: "una alarma",
+            explicacion: "¡Hackeado! +50 XP. El SCADA gestiona alarmas: avisa al operador cuando una variable sale de rango."
+          },
+          {
+            id: 22,
+            pregunta: "¿El SCADA muestra el estado en tiempo real o solo guarda datos para el día siguiente?",
+            respuestaInput: "tiempo real",
+            alias: ["en tiempo real", "real"],
+            opcionesTest: ["solo guarda datos diferidos", "permite verlo en tiempo real", "solo imprime informes", "solo funciona sin red"],
+            respuestaTest: "permite verlo en tiempo real",
+            explicacion: "¡Acceso concedido! +50 XP. El SCADA muestra el estado en tiempo real y además historiza los datos."
+          },
+          {
+            id: 23,
+            pregunta: "¿Desde dónde interactúan normalmente los operadores con el sistema SCADA?",
+            respuestaInput: "sala de control",
+            alias: ["desde una sala de control", "sala central"],
+            opcionesTest: ["desde el armario del PLC", "desde una sala de control", "desde el propio sensor", "desde el switch de red"],
+            respuestaTest: "desde una sala de control",
+            explicacion: "¡Correcto! +50 XP. El SCADA centraliza toda la planta en una sala de control."
+          }
+        ],
+        profe: [
+          {
+            id: 24,
+            pregunta: "¿Qué significan las siglas HMI de las pantallas táctiles a pie de máquina?",
+            respuestaInput: "interfaz hombre-maquina",
+            alias: ["interfaz hombre maquina", "interfaz hombre-máquina", "human machine interface"],
+            opcionesTest: ["Interfaz Hombre-Máquina", "Historial de Mantenimiento Industrial", "Módulo Horizontal de Inputs", "Interfaz Modbus Industrial"],
+            respuestaTest: "Interfaz Hombre-Máquina",
+            explicacion: "¡Hackeado! +50 XP. HMI = Interfaz Hombre-Máquina, la pantalla táctil a pie de máquina."
+          },
+          {
+            id: 25,
+            pregunta: "Para saber la temperatura, el SCADA no lee el sensor directo. ¿A quién le pide el dato?",
+            respuestaInput: "plc",
+            alias: ["al plc", "rtu", "al plc o rtu"],
+            opcionesTest: ["al PLC (o RTU)", "al actuador", "al firewall", "al historian"],
+            respuestaTest: "al PLC (o RTU)",
+            explicacion: "¡Acceso concedido! +50 XP. El PLC (o la RTU) lee el sensor y el SCADA le pide el dato a él."
+          },
+          {
+            id: 26,
+            pregunta: "¿Qué componente del software SCADA guarda el registro de temperaturas pasadas?",
+            respuestaInput: "historian",
+            alias: ["historizador", "el historian", "el historizador"],
+            opcionesTest: ["el Historian (historizador)", "la HMI", "el módulo de alarmas", "el switch industrial"],
+            respuestaTest: "el Historian (historizador)",
+            explicacion: "¡Correcto! +50 XP. El Historian almacena el histórico para analizar tendencias y auditar el proceso."
+          }
+        ],
+        experto: [
+          {
+            id: 27,
+            pregunta: "En SCADA de redes amplias, ¿qué significa RTU, el equipo que envía datos?",
+            respuestaInput: "unidad terminal remota",
+            alias: ["remote terminal unit"],
+            opcionesTest: ["Unidad Terminal Remota", "Red de Transmisión Unificada", "Registro de Tiempo Único", "Ruta de Transporte Universal"],
+            respuestaTest: "Unidad Terminal Remota",
+            explicacion: "¡Hackeado! +50 XP. La RTU (Unidad Terminal Remota) recoge datos en puntos geográficamente dispersos."
+          },
+          {
+            id: 28,
+            pregunta: "¿Qué protocolo actúa como 'traductor' universal para hablar con PLCs de marcas diferentes?",
+            respuestaInput: "opc",
+            alias: ["opc ua", "opcua"],
+            opcionesTest: ["OPC (OPC UA)", "Modbus RTU", "HTTP", "Profibus"],
+            respuestaTest: "OPC (OPC UA)",
+            explicacion: "¡Acceso concedido! +50 XP. OPC UA es el estándar traductor entre equipos de distintos fabricantes."
+          },
+          {
+            id: 29,
+            pregunta: "¿Cuál es la diferencia entre un SCADA y un DCS?",
+            respuestaInput: "disperso",
+            alias: ["scada supervisa procesos dispersos", "procesos dispersos", "dcs controla procesos continuos"],
+            opcionesTest: [
+              "SCADA supervisa procesos dispersos; DCS controla procesos continuos en planta",
+              "Son exactamente lo mismo con distinto nombre",
+              "SCADA es hardware y DCS es solo software",
+              "DCS solo funciona con Modbus y SCADA con OPC"
+            ],
+            respuestaTest: "SCADA supervisa procesos dispersos; DCS controla procesos continuos en planta",
+            explicacion: "¡Correcto! +50 XP. SCADA vigila instalaciones dispersas; el DCS controla un proceso continuo dentro de una planta."
+          }
+        ]
+      },
+
+      4: {
+        nombre: "Redes Industriales y Protocolos",
+        alumno: [
+          {
+            id: 30,
+            pregunta: "¿Qué es un 'protocolo de comunicación'?",
+            respuestaInput: "conjunto de reglas",
+            alias: ["reglas", "un conjunto de reglas", "normas"],
+            opcionesTest: ["un conjunto de reglas para que los equipos se entiendan", "un tipo de cable apantallado", "un modelo de PLC", "una marca de switch"],
+            respuestaTest: "un conjunto de reglas para que los equipos se entiendan",
+            explicacion: "¡Correcto! +50 XP. Un protocolo es el idioma común: las reglas que permiten que dos equipos se entiendan."
+          },
+          {
+            id: 31,
+            pregunta: "Si conectamos dos ordenadores con un cable para pasar archivos, ¿es una red?",
+            respuestaInput: "si",
+            alias: ["sí", "yes", "si es una red"],
+            opcionesTest: ["sí", "no", "solo si hay un router", "solo si usan Modbus"],
+            respuestaTest: "sí",
+            explicacion: "¡Hackeado! +50 XP. Dos equipos conectados que intercambian datos ya forman una red."
+          },
+          {
+            id: 32,
+            pregunta: "¿Cómo se llama el cable de red con conector RJ45 que conecta un PC al router?",
+            respuestaInput: "ethernet",
+            alias: ["cable ethernet", "rj45"],
+            opcionesTest: ["cable Ethernet", "cable coaxial", "fibra monomodo", "cable serie RS-232"],
+            respuestaTest: "cable Ethernet",
+            explicacion: "¡Acceso concedido! +50 XP. El cable Ethernet con conector RJ45 es el estándar de las redes actuales."
+          },
+          {
+            id: 33,
+            pregunta: "En una red en estrella, ¿qué dispositivo central conecta múltiples equipos?",
+            respuestaInput: "switch",
+            alias: ["un switch", "conmutador"],
+            opcionesTest: ["un switch", "un sensor inductivo", "una HMI", "un cilindro neumático"],
+            respuestaTest: "un switch",
+            explicacion: "¡Correcto! +50 XP. El switch es el nodo central que interconecta los equipos en topología estrella."
+          }
+        ],
+        profe: [
+          {
+            id: 34,
+            pregunta: "¿Qué estándar o familia de protocolos rige Internet y las fábricas modernas?",
+            respuestaInput: "tcp/ip",
+            alias: ["tcp ip", "tcpip"],
+            opcionesTest: ["TCP/IP", "Modbus RTU", "Profibus DP", "OPC UA"],
+            respuestaTest: "TCP/IP",
+            explicacion: "¡Hackeado! +50 XP. TCP/IP es el estándar mundial, también dentro de la planta industrial."
+          },
+          {
+            id: 35,
+            pregunta: "En comunicación 'Full-Duplex', ¿los equipos envían y reciben a la vez, o por turnos?",
+            respuestaInput: "a la vez",
+            alias: ["ala vez", "simultaneamente", "simultáneamente", "a la vez simultaneo"],
+            opcionesTest: ["a la vez", "por turnos", "solo reciben", "solo envían"],
+            respuestaTest: "a la vez",
+            explicacion: "¡Acceso concedido! +50 XP. Full-Duplex = transmisión y recepción simultáneas, sin esperar turno."
+          },
+          {
+            id: 36,
+            pregunta: "Para comprobar si un servidor está vivo enviando un pequeño paquete, ¿qué comando usas?",
+            respuestaInput: "ping",
+            alias: ["el comando ping"],
+            opcionesTest: ["ping", "ls", "sudo", "cd"],
+            respuestaTest: "ping",
+            explicacion: "¡Correcto! +50 XP. ping envía paquetes ICMP y mide si el host responde y en cuánto tiempo."
+          }
+        ],
+        experto: [
+          {
+            id: 37,
+            pregunta: "La necesidad industrial de que un dato llegue en un tiempo garantizado se llama:",
+            respuestaInput: "determinismo",
+            alias: ["tiempo real", "determinista"],
+            opcionesTest: ["determinismo (tiempo real)", "latencia variable", "redundancia", "segmentación"],
+            respuestaTest: "determinismo (tiempo real)",
+            explicacion: "¡Hackeado! +50 XP. Una parada de emergencia debe llegar en un tiempo máximo garantizado: eso es determinismo."
+          },
+          {
+            id: 38,
+            pregunta: "En el modelo OSI, ¿en qué capa ocurren las direcciones IP y el enrutamiento?",
+            respuestaInput: "3",
+            alias: ["capa 3", "tres", "capa de red", "red"],
+            opcionesTest: ["capa 1 (Física)", "capa 2 (Enlace)", "capa 3 (Red)", "capa 7 (Aplicación)"],
+            respuestaTest: "capa 3 (Red)",
+            explicacion: "¡Acceso concedido! +50 XP. La capa 3 (Red) es la del direccionamiento IP y el enrutamiento."
+          },
+          {
+            id: 39,
+            pregunta: "¿Qué protocolo industrial de 1979 basado en Maestro/Esclavo sigue siendo muy usado?",
+            respuestaInput: "modbus",
+            alias: ["modbus rtu", "modbus tcp"],
+            opcionesTest: ["Modbus", "OPC UA", "HTTPS", "MQTT"],
+            respuestaTest: "Modbus",
+            explicacion: "¡Correcto! +50 XP. Modbus nació en 1979 y sigue vivo por su simplicidad maestro/esclavo."
+          }
+        ]
+      },
+
+      5: {
+        nombre: "Fundamentos de Linux y Ciberseguridad",
+        alumno: [
+          {
+            id: 40,
+            pregunta: "¿Qué es Linux: un protocolo, un sistema operativo o un antivirus?",
+            respuestaInput: "sistema operativo",
+            alias: ["un sistema operativo", "so"],
+            opcionesTest: ["un protocolo", "un sistema operativo", "un antivirus", "un tipo de PLC"],
+            respuestaTest: "un sistema operativo",
+            explicacion: "¡Correcto! +50 XP. Linux es un sistema operativo, base de la mayoría de servidores y routers."
+          },
+          {
+            id: 41,
+            pregunta: "¿Qué sistema actúa como guardia, bloqueando tráfico peligroso en la red?",
+            respuestaInput: "firewall",
+            alias: ["cortafuegos", "el firewall", "un firewall"],
+            opcionesTest: ["el Firewall (cortafuegos)", "el Historian", "el switch", "el actuador"],
+            respuestaTest: "el Firewall (cortafuegos)",
+            explicacion: "¡Hackeado! +50 XP. El firewall filtra el tráfico y bloquea lo que no cumple las reglas."
+          },
+          {
+            id: 42,
+            pregunta: "Sin entorno gráfico, ¿qué herramienta de texto se usa para dar órdenes a Linux?",
+            respuestaInput: "terminal",
+            alias: ["consola", "la terminal", "shell", "linea de comandos"],
+            opcionesTest: ["la terminal (consola)", "el explorador de archivos", "la HMI", "el panel de control"],
+            respuestaTest: "la terminal (consola)",
+            explicacion: "¡Acceso concedido! +50 XP. La terminal es la interfaz de texto para dar órdenes al sistema."
+          },
+          {
+            id: 43,
+            pregunta: "Para un PLC, ¿se considera seguro usar la contraseña 'admin123'?",
+            respuestaInput: "no",
+            alias: ["no es seguro", "no, es una vulnerabilidad"],
+            opcionesTest: ["sí, es suficiente", "no, es una vulnerabilidad", "solo si la red es industrial", "solo en horario laboral"],
+            respuestaTest: "no, es una vulnerabilidad",
+            explicacion: "¡Correcto! +50 XP. Las credenciales por defecto o débiles son una de las puertas de entrada más explotadas."
+          }
+        ],
+        profe: [
+          {
+            id: 44,
+            pregunta: "En la terminal de Linux, ¿qué comando escribes para 'listar' los archivos?",
+            respuestaInput: "ls",
+            alias: ["el comando ls", "ls -la"],
+            opcionesTest: ["ls", "cd", "sudo", "ping"],
+            respuestaTest: "ls",
+            explicacion: "¡Hackeado! +50 XP. ls lista el contenido del directorio; con -la ves también los archivos ocultos."
+          },
+          {
+            id: 45,
+            pregunta: "¿Cómo se llama el ataque donde se engaña al operador por email para robar su clave?",
+            respuestaInput: "phishing",
+            alias: ["el phishing", "pishing"],
+            opcionesTest: ["Phishing", "DoS", "Segmentación", "Determinismo"],
+            respuestaTest: "Phishing",
+            explicacion: "¡Acceso concedido! +50 XP. El phishing ataca a la persona, no a la máquina: suele ser la vía de entrada inicial."
+          },
+          {
+            id: 46,
+            pregunta: "En Linux, para tener permisos de administrador temporal, ¿qué palabra antecede al comando?",
+            respuestaInput: "sudo",
+            alias: ["el comando sudo"],
+            opcionesTest: ["sudo", "root", "admin", "chmod"],
+            respuestaTest: "sudo",
+            explicacion: "¡Correcto! +50 XP. sudo eleva privilegios solo para ese comando concreto."
+          }
+        ],
+        experto: [
+          {
+            id: 47,
+            pregunta: "¿Qué comando de Linux te permite cambiar de directorio (moverte de carpeta)?",
+            respuestaInput: "cd",
+            alias: ["change directory", "el comando cd"],
+            opcionesTest: ["cd", "ls", "mv", "ping"],
+            respuestaTest: "cd",
+            explicacion: "¡Hackeado! +50 XP. cd (change directory) es cómo te mueves por el árbol de carpetas."
+          },
+          {
+            id: 48,
+            pregunta: "¿En qué consiste el principio de 'Segmentación de Red' entre oficinas y fábrica?",
+            respuestaInput: "aislar",
+            alias: ["aislar las redes", "separar las redes", "aislar redes"],
+            opcionesTest: [
+              "en aislar las redes para frenar infecciones",
+              "en unir IT y OT en una sola red plana",
+              "en usar el mismo switch para todo",
+              "en desactivar el firewall en planta"
+            ],
+            respuestaTest: "en aislar las redes para frenar infecciones",
+            explicacion: "¡Acceso concedido! +50 XP. Segmentar aísla lo crítico: un virus en oficinas no debe parar la producción."
+          },
+          {
+            id: 49,
+            pregunta: "En ciberseguridad industrial, ¿qué es un ataque DoS (Denegación de Servicio)?",
+            respuestaInput: "saturar",
+            alias: ["sobrecargar", "saturar un equipo", "sobrecargar un equipo"],
+            opcionesTest: [
+              "sobrecargar un equipo hasta saturarlo y bloquearlo",
+              "robar credenciales por email",
+              "cifrar los archivos pidiendo rescate",
+              "escuchar el tráfico sin modificarlo"
+            ],
+            respuestaTest: "sobrecargar un equipo hasta saturarlo y bloquearlo",
+            explicacion: "¡Correcto! +50 XP. El DoS satura el equipo con peticiones hasta dejarlo sin capacidad de responder."
+          }
+        ]
+      }
+    };
+
+    /* ============================================================
+       MOTOR DEL JUEGO
+       ============================================================ */
+
+    const RANGOS = [
+      { clave: "alumno",  nombre: "Rango Alumno",       sub: "Fácil" },
+      { clave: "profe",   nombre: "Rango Profe",        sub: "Medio" },
+      { clave: "experto", nombre: "Rango Experto",      sub: "Difícil" },
+      { clave: "tesla",   nombre: "Rango Nikola Tesla", sub: "Jefe supremo" }
+    ];
+
+    const XP_POR_RETO = 50;
+    const CLAVE_GUARDADO = "shellacademy.progreso.v1";
+
+    // Busca una pregunta por id en todo el banco (para montar el jefe final).
+    function buscarPregunta(id) {
+      for (const mundo of Object.values(BANCO)) {
+        for (const clave of ["alumno", "profe", "experto"]) {
+          const encontrada = mundo[clave].find((p) => p.id === id);
+          if (encontrada) return encontrada;
+        }
+      }
+      return null;
+    }
+
+    // Jefe supremo: lo más duro de los cinco mundos, sin inventar preguntas nuevas.
+    const JEFE_TESLA = [8, 17, 28, 37, 48, 49].map(buscarPregunta).filter(Boolean);
+
+    /* ---------- Estado ---------- */
+    let estado = {
+      mundo: 1,
+      rango: "alumno",
+      indice: 0,
+      xp: 0,
+      completados: {}   // "1:alumno" -> true
+    };
+
+    let bloqueado = false;
+    let temporizadores = [];
+
+    /* ---------- DOM ---------- */
+    const $ = (id) => document.getElementById(id);
+    const elPregunta   = $("texto-pregunta");
+    const elZonaInput  = $("zona-input");
+    const elInputWrap  = $("input-wrap");
+    const elComando    = $("comando");
+    const elZonaTest   = $("zona-test");
+    const elOpciones   = $("opciones-test");
+    const elZonaFin    = $("zona-fin");
+    const elTextoFin   = $("texto-fin");
+    const elLog        = $("terminal-log");
+    const elBarra      = $("barra-progreso");
+    const elBarraWrap  = $("barra-progreso-wrap");
+    const elRetoActual = $("reto-actual");
+    const elRetoTotal  = $("reto-total");
+    const elXp         = $("xp-counter");
+    const elBadgeMundo = $("badge-mundo");
+    const elBadgeRango = $("badge-rango");
+    const elBadgeXp    = $("badge-xp");
+    const elVentana    = $("titulo-ventana");
+    const elListaMundos= $("lista-mundos");
+    const elListaRangos= $("lista-rangos");
+    const elOverlay    = $("modal-overlay");
+    const elModalTexto = $("modal-explicacion");
+    const elCuenta     = $("cuenta-atras");
+
+    /* ---------- Utilidades ---------- */
+    function normalizar(texto) {
+      return String(texto)
+        .trim()
+        .toLowerCase()
+        .normalize("NFD").replace(/[̀-ͯ]/g, "")
+        .replace(/[.,;:!?¿¡"']/g, "")
+        .replace(/\s+/g, " ");
+    }
+
+    // Acepta la respuesta exacta, sus alias y el plural simple.
+    function coincide(entrada, reto, esperado) {
+      const a = normalizar(entrada);
+      const candidatos = [esperado].concat(reto && reto.alias ? reto.alias : []);
+      return candidatos.some(function (c) {
+        const b = normalizar(c);
+        return a === b || a === b + "s" || a === b + "es";
       });
-    })();
+    }
+
+    function escribirLog(texto, tono) {
+      const colores = { ok: "text-neon", err: "text-danger", sys: "text-lo", user: "text-hi" };
+      const linea = document.createElement("p");
+      linea.className = colores[tono] || "text-lo";
+      linea.textContent = texto;
+      elLog.appendChild(linea);
+      elLog.scrollTop = elLog.scrollHeight;
+    }
+
+    function limpiarTemporizadores() {
+      temporizadores.forEach(clearTimeout);
+      temporizadores = [];
+    }
+
+    /* ---------- Persistencia (best-effort) ---------- */
+    function guardar() {
+      try {
+        localStorage.setItem(CLAVE_GUARDADO, JSON.stringify({
+          xp: estado.xp, completados: estado.completados
+        }));
+      } catch (e) { /* modo privado o almacenamiento bloqueado: seguimos igual */ }
+    }
+
+    function cargar() {
+      try {
+        const crudo = localStorage.getItem(CLAVE_GUARDADO);
+        if (!crudo) return;
+        const datos = JSON.parse(crudo);
+        if (datos && typeof datos.xp === "number") estado.xp = datos.xp;
+        if (datos && datos.completados) estado.completados = datos.completados;
+      } catch (e) { /* ignoramos progreso corrupto */ }
+    }
+
+    /* ---------- Consultas sobre el banco ---------- */
+    function retosDe(mundo, rango) {
+      if (rango === "tesla") return JEFE_TESLA;
+      return BANCO[mundo][rango] || [];
+    }
+
+    function estaCompletado(mundo, rango) {
+      return Boolean(estado.completados[mundo + ":" + rango]);
+    }
+
+    function rangoDesbloqueado(mundo, rango) {
+      if (rango === "alumno") return true;
+      if (rango === "profe") return estaCompletado(mundo, "alumno");
+      if (rango === "experto") return estaCompletado(mundo, "profe");
+      // Nikola Tesla exige haber cerrado el rango Experto de los cinco mundos.
+      return Object.keys(BANCO).every(function (m) { return estaCompletado(m, "experto"); });
+    }
+
+    /* ---------- Render de la navegación ---------- */
+    function renderMundos() {
+      elListaMundos.innerHTML = "";
+      Object.keys(BANCO).forEach(function (id) {
+        const mundo = BANCO[id];
+        const activo = String(estado.mundo) === String(id);
+        const cerrado = ["alumno", "profe", "experto"].every(function (r) { return estaCompletado(id, r); });
+
+        const boton = document.createElement("button");
+        boton.type = "button";
+        boton.className =
+          "rounded-lg border px-3 py-2.5 text-left text-xs transition-colors focus-visible:outline-none " +
+          "focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-bg " +
+          (activo
+            ? "border-neon bg-neon/10 text-neon"
+            : "border-edge bg-panel text-lo hover:border-neon hover:text-hi");
+        boton.innerHTML =
+          '<span class="block font-bold">Mundo ' + id + (cerrado ? ' ✓' : '') + '</span>' +
+          '<span class="mt-0.5 block text-[11px] opacity-80 nombre-mundo"></span>';
+        boton.querySelector(".nombre-mundo").textContent = mundo.nombre;
+        boton.addEventListener("click", function () { irA(Number(id), "alumno"); });
+        elListaMundos.appendChild(boton);
+      });
+    }
+
+    function renderRangos() {
+      elListaRangos.innerHTML = "";
+      RANGOS.forEach(function (rango) {
+        const abierto = rangoDesbloqueado(estado.mundo, rango.clave);
+        const activo = estado.rango === rango.clave;
+        const hecho = estaCompletado(estado.mundo, rango.clave);
+        const vacio = retosDe(estado.mundo, rango.clave).length === 0;
+
+        const item = document.createElement("li");
+        const boton = document.createElement("button");
+        boton.type = "button";
+        boton.disabled = !abierto || vacio;
+        if (activo) item.setAttribute("aria-current", "step");
+
+        boton.className =
+          "w-full rounded-lg border px-3 py-2.5 text-left transition-colors focus-visible:outline-none " +
+          "focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-bg " +
+          (activo
+            ? "border-neon bg-neon/10"
+            : abierto && !vacio
+              ? "border-edge bg-panel hover:border-neon"
+              : "border-edge bg-panel opacity-50 cursor-not-allowed");
+
+        const estadoTexto = vacio
+          ? "sin retos"
+          : !abierto ? "bloqueado" : hecho ? "completado ✓" : activo ? "actual" : "disponible";
+
+        boton.innerHTML =
+          '<span class="block font-bold ' + (activo ? "text-neon" : "text-lo") + '">' +
+            (activo ? "▸ " : "") + rango.nombre +
+          '</span>' +
+          '<span class="mt-0.5 block text-[11px] text-lo">' + rango.sub + " · " + estadoTexto + '</span>';
+
+        boton.addEventListener("click", function () { irA(estado.mundo, rango.clave); });
+        item.appendChild(boton);
+        elListaRangos.appendChild(item);
+      });
+    }
+
+    function renderCabecera() {
+      const rango = RANGOS.find(function (r) { return r.clave === estado.rango; });
+      elBadgeMundo.textContent = estado.rango === "tesla"
+        ? "Jefe supremo · los 5 mundos"
+        : "Mundo " + estado.mundo + " · " + BANCO[estado.mundo].nombre;
+      elBadgeRango.textContent = rango.nombre;
+      elBadgeXp.textContent = estado.xp + " XP";
+      elVentana.textContent = estado.rango === "tesla"
+        ? "tesla@shellacademy: ~/jefe-final"
+        : estado.rango + "@shellacademy: ~/mundo" + estado.mundo;
+    }
+
+    function actualizarHud(resueltos) {
+      const total = retosDe(estado.mundo, estado.rango).length || 1;
+      const pct = Math.round((resueltos / total) * 100);
+      elBarra.style.width = pct + "%";
+      elBarraWrap.setAttribute("aria-valuenow", String(pct));
+      elRetoActual.textContent = String(Math.min(estado.indice + 1, total));
+      elRetoTotal.textContent = String(total);
+      elXp.textContent = "XP: " + estado.xp;
+      elBadgeXp.textContent = estado.xp + " XP";
+    }
+
+    /* ---------- Render del reto ---------- */
+    function renderPregunta() {
+      const retos = retosDe(estado.mundo, estado.rango);
+      const reto = retos[estado.indice];
+      if (!reto) { finalizarRango(); return; }
+
+      elPregunta.textContent = reto.pregunta;
+
+      // Modo consola restaurado en cada reto nuevo
+      elZonaFin.classList.add("hidden");
+      elZonaTest.classList.add("hidden");
+      elOpciones.innerHTML = "";
+      elZonaInput.classList.remove("hidden");
+      elComando.value = "";
+      elComando.disabled = false;
+
+      actualizarHud(estado.indice);
+      escribirLog("$ reto --mundo " + estado.mundo + " --rango " + estado.rango + " --id " + reto.id, "sys");
+
+      if (!window.matchMedia("(hover: none)").matches) elComando.focus();
+    }
+
+    /* ---------- Acierto ---------- */
+    function acierto(reto) {
+      bloqueado = true;
+      estado.xp += XP_POR_RETO;
+      actualizarHud(estado.indice + 1);
+      guardar();
+
+      escribirLog("[OK] Respuesta validada · +" + XP_POR_RETO + " XP", "ok");
+
+      elModalTexto.textContent = reto.explicacion;
+      elOverlay.classList.remove("hidden");
+      elOverlay.classList.add("flex");
+
+      let restante = 3;
+      elCuenta.textContent = String(restante);
+      const tic = setInterval(function () {
+        restante -= 1;
+        elCuenta.textContent = String(Math.max(restante, 0));
+        if (restante <= 0) clearInterval(tic);
+      }, 1000);
+
+      temporizadores.push(setTimeout(function () {
+        clearInterval(tic);
+        cerrarModal();
+        siguientePregunta();
+      }, 3000));
+    }
+
+    function cerrarModal() {
+      elOverlay.classList.add("hidden");
+      elOverlay.classList.remove("flex");
+      bloqueado = false;
+    }
+
+    function siguientePregunta() {
+      estado.indice += 1;
+      if (estado.indice < retosDe(estado.mundo, estado.rango).length) {
+        renderPregunta();
+      } else {
+        finalizarRango();
+      }
+    }
+
+    /* ---------- Fallo: castigo + tipo test ---------- */
+    function activarModoTest(reto, intento) {
+      escribirLog("> " + intento, "user");
+      escribirLog("[ERR] '" + intento + "' no es una respuesta válida. Consola bloqueada.", "err");
+      escribirLog("[SYS] Cargando modo asistido: 4 opciones disponibles.", "sys");
+
+      elInputWrap.classList.add("shake");
+      setTimeout(function () { elInputWrap.classList.remove("shake"); }, 500);
+
+      // Desaparecen el input y el botón Ejecutar
+      elZonaInput.classList.add("hidden");
+
+      elOpciones.innerHTML = "";
+      reto.opcionesTest.forEach(function (opcion, i) {
+        const boton = document.createElement("button");
+        boton.type = "button";
+        boton.className =
+          "flex items-start gap-3 rounded-lg border border-edge bg-bg px-4 py-3 text-left text-sm text-hi " +
+          "transition-colors hover:border-neon hover:text-neon focus-visible:outline-none " +
+          "focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-surface";
+        boton.innerHTML =
+          '<span class="text-xs font-bold text-neon">' + String.fromCharCode(65 + i) + ')</span>' +
+          '<span class="etiqueta"></span>';
+        boton.querySelector(".etiqueta").textContent = opcion;
+        boton.addEventListener("click", function () { elegirOpcion(boton, opcion, reto); });
+        elOpciones.appendChild(boton);
+      });
+
+      elZonaTest.classList.remove("hidden");
+    }
+
+    function elegirOpcion(boton, opcion, reto) {
+      if (bloqueado || boton.disabled) return;
+
+      if (normalizar(opcion) === normalizar(reto.respuestaTest)) {
+        Array.prototype.forEach.call(elOpciones.children, function (b) { b.disabled = true; });
+        boton.className =
+          "flex items-start gap-3 rounded-lg border-2 border-neon bg-neon/15 px-4 py-3 text-left text-sm font-bold text-neon";
+        acierto(reto);
+      } else {
+        // Opción incorrecta: se descarta visualmente y deja de responder
+        boton.disabled = true;
+        boton.className =
+          "flex items-start gap-3 rounded-lg border border-edge bg-panel px-4 py-3 text-left text-sm " +
+          "text-lo opacity-40 line-through cursor-not-allowed";
+        escribirLog("[ERR] Opción descartada: " + opcion, "err");
+      }
+    }
+
+    /* ---------- Fin de rango ---------- */
+    function finalizarRango() {
+      limpiarTemporizadores();
+      estado.completados[estado.mundo + ":" + estado.rango] = true;
+      guardar();
+
+      const indiceRango = RANGOS.findIndex(function (r) { return r.clave === estado.rango; });
+      const siguiente = RANGOS[indiceRango + 1];
+      const rangoActual = RANGOS[indiceRango];
+
+      elZonaInput.classList.add("hidden");
+      elZonaTest.classList.add("hidden");
+      elZonaFin.classList.remove("hidden");
+
+      if (estado.rango === "tesla") {
+        elPregunta.textContent = "Has derrotado al jefe supremo. Fundamentos industriales dominados.";
+        elTextoFin.textContent = "Rango Nikola Tesla completado con " + estado.xp + " XP. No queda nada por hackear… por ahora.";
+        $("btn-continuar").textContent = "Volver al Mundo 1";
+      } else if (siguiente && rangoDesbloqueado(estado.mundo, siguiente.clave)) {
+        elPregunta.textContent = rangoActual.nombre + " superado en el Mundo " + estado.mundo + ".";
+        elTextoFin.textContent = "Desbloqueado: " + siguiente.nombre + " (" + siguiente.sub + "). XP total: " + estado.xp + ".";
+        $("btn-continuar").textContent = "Ir a " + siguiente.nombre;
+      } else {
+        elPregunta.textContent = rangoActual.nombre + " superado en el Mundo " + estado.mundo + ".";
+        elTextoFin.textContent = "Mundo " + estado.mundo + " cerrado. Completa el rango Experto de los 5 mundos para desbloquear el Rango Nikola Tesla. XP total: " + estado.xp + ".";
+        $("btn-continuar").textContent = "Siguiente mundo";
+      }
+
+      actualizarHud(retosDe(estado.mundo, estado.rango).length);
+      escribirLog("[OK] " + rangoActual.nombre + " completado. XP total: " + estado.xp, "ok");
+      renderMundos();
+      renderRangos();
+      renderCabecera();
+    }
+
+    function continuar() {
+      const indiceRango = RANGOS.findIndex(function (r) { return r.clave === estado.rango; });
+      const siguiente = RANGOS[indiceRango + 1];
+
+      if (estado.rango === "tesla") { irA(1, "alumno"); return; }
+
+      if (siguiente && rangoDesbloqueado(estado.mundo, siguiente.clave) && retosDe(estado.mundo, siguiente.clave).length) {
+        irA(estado.mundo, siguiente.clave);
+        return;
+      }
+      // Sin rango siguiente en este mundo: saltamos al próximo mundo (o al jefe final).
+      if (rangoDesbloqueado(estado.mundo, "tesla")) { irA(estado.mundo, "tesla"); return; }
+      const mundos = Object.keys(BANCO).map(Number);
+      const proximo = mundos.find(function (m) { return m > estado.mundo; }) || mundos[0];
+      irA(proximo, "alumno");
+    }
+
+    /* ---------- Navegación ---------- */
+    function irA(mundo, rango) {
+      if (!rangoDesbloqueado(mundo, rango) || retosDe(mundo, rango).length === 0) return;
+      limpiarTemporizadores();
+      cerrarModal();
+      estado.mundo = mundo;
+      estado.rango = rango;
+      estado.indice = 0;
+      elLog.innerHTML = "";
+      escribirLog("[SYS] Conectando con planta industrial… OK", "sys");
+      escribirLog(
+        "[SYS] " + (rango === "tesla"
+          ? "JEFE SUPREMO · Rango Nikola Tesla"
+          : "Mundo " + mundo + ": " + BANCO[mundo].nombre + " · " + RANGOS.find(function (r) { return r.clave === rango; }).nombre),
+        "sys"
+      );
+      renderMundos();
+      renderRangos();
+      renderCabecera();
+      renderPregunta();
+    }
+
+    /* ---------- Envío del formulario ---------- */
+    elZonaInput.addEventListener("submit", function (evento) {
+      evento.preventDefault();
+      if (bloqueado) return;
+
+      const reto = retosDe(estado.mundo, estado.rango)[estado.indice];
+      if (!reto) return;
+
+      const intento = elComando.value.trim();
+      if (intento === "") {
+        elInputWrap.classList.add("shake");
+        setTimeout(function () { elInputWrap.classList.remove("shake"); }, 500);
+        escribirLog("[SYS] Introduce una respuesta antes de ejecutar.", "sys");
+        return;
+      }
+
+      if (coincide(intento, reto, reto.respuestaInput)) {
+        escribirLog("> " + intento, "user");
+        acierto(reto);
+      } else {
+        activarModoTest(reto, intento);
+      }
+    });
+
+    $("btn-continuar").addEventListener("click", continuar);
+    $("btn-repetir").addEventListener("click", function () { irA(estado.mundo, estado.rango); });
+    $("btn-reset").addEventListener("click", function () {
+      estado.xp = 0;
+      estado.completados = {};
+      guardar();
+      irA(1, "alumno");
+    });
+
+    /* ---------- Arranque ---------- */
+    cargar();
+    irA(1, "alumno");
   </script>
 
 </body>
