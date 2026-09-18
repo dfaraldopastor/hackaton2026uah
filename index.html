@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<!-- TODO: cambiar el título de la pestaña por el nombre real del proyecto -->
+<title>Nombre del proyecto — Hackathon 2026</title>
+<!-- TODO: cambiar la meta description por una frase real del proyecto -->
+<meta name="description" content="Descripción breve del proyecto para la hackathon." />
+
+<!-- Tipografías vía Google Fonts CDN (sin instalación local) -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Sora:wght@500;600;700&display=swap" rel="stylesheet" />
+
+<!-- Tailwind CSS vía CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          bg: "#0B0E14",
+          surface: "#12151E",
+          edge: "#242938",
+          hi: "#F4F5F7",
+          lo: "#97A1B3",
+          accentViolet: "#8B5CF6",
+          accentCoral: "#FB7185",
+          accentTeal: "#2DD4BF",
+        },
+        fontFamily: {
+          display: ['"Sora"', "sans-serif"],
+          body: ['"IBM Plex Sans"', "sans-serif"],
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  /* Patrón de puntos sutil de fondo (efecto "grid/circuito") solo en el hero */
+  .bg-dot-grid {
+    background-image: radial-gradient(rgba(244, 245, 247, 0.08) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+  /* Evita que los dígitos "bailen" de anchura al cambiar los números de las métricas */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+</style>
+</head>
+
+<body class="bg-bg text-hi font-body antialiased">
+
+  <!-- ======================= NAVBAR ======================= -->
+  <!-- TODO: sustituir el nombre/logo ficticio y los 2 enlaces por los reales -->
+  <header class="sticky top-0 z-50 border-b border-edge bg-bg/80 backdrop-blur">
+    <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <a href="#" class="flex items-center gap-2 rounded-sm font-display text-lg font-semibold tracking-tight text-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentViolet">
+        <!-- Marca ficticia: sustituir por el logo real, o quitar este SVG si no aplica -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="2" y="2" width="9" height="9" rx="2" fill="#8B5CF6" />
+          <rect x="13" y="13" width="9" height="9" rx="2" fill="#FB7185" />
+        </svg>
+        Nexus <!-- TODO: nombre real del proyecto -->
+      </a>
+      <div class="flex items-center gap-8 text-sm text-lo">
+        <!-- TODO: enlace 1 (texto + href) -->
+        <a href="#" class="rounded-sm transition-colors hover:text-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentViolet">Equipo</a>
+        <!-- TODO: enlace 2 (texto + href) -->
+        <a href="#" class="rounded-sm transition-colors hover:text-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentViolet">Repositorio</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ======================= HERO ======================= -->
+    <section class="relative overflow-hidden bg-dot-grid">
+      <!-- Resplandor decorativo — único acento grande de la página, no lo dupliques en otras secciones -->
+      <div class="pointer-events-none absolute -top-32 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-accentViolet/20 blur-3xl" aria-hidden="true"></div>
+
+      <div class="relative mx-auto max-w-6xl px-6 pt-28 pb-24 md:pt-36 md:pb-32">
+        <div class="max-w-2xl">
+          <!-- TODO: título principal (nombre o titular del proyecto) -->
+          <h1 class="font-display text-5xl font-semibold leading-tight tracking-tight text-hi md:text-6xl">
+            Nombre del proyecto
+          </h1>
+          <!-- TODO: subtítulo — una frase que resuma qué hace el proyecto y a quién ayuda -->
+          <p class="mt-6 max-w-lg text-lg text-lo">
+            Escribe aquí, en una frase, qué hace el proyecto y a quién ayuda.
+          </p>
+          <!-- TODO: texto del botón y enlace real (demo, repositorio, formulario del jurado...) -->
+          <div class="mt-10">
+            <a href="#" class="inline-flex items-center rounded-lg bg-accentViolet px-6 py-3 text-sm font-semibold text-hi transition-colors hover:bg-accentViolet/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accentViolet focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
+              Ver demo
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= FEATURES / SERVICIOS (3 tarjetas) ======================= -->
+    <!-- TODO: en cada tarjeta, cambiar título, descripción y el icono (los 3 SVG son genéricos) -->
+    <section class="border-t border-edge bg-bg">
+      <div class="mx-auto max-w-6xl px-6 py-20 md:py-28">
+        <div class="grid gap-6 md:grid-cols-3">
+
+          <!-- Tarjeta 1 -->
+          <div class="rounded-xl border border-edge bg-surface p-6">
+            <div class="mb-5 h-0.5 w-10 rounded-full bg-accentViolet"></div>
+            <div class="mb-4 text-accentViolet">
+              <!-- Icono genérico (rayo) -->
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h2 class="font-display text-lg font-semibold text-hi">Título de la función 1</h2>
+            <p class="mt-2 text-sm leading-relaxed text-lo">Una frase que explique qué hace y por qué importa para quien lo usa.</p>
+          </div>
+
+          <!-- Tarjeta 2 -->
+          <div class="rounded-xl border border-edge bg-surface p-6">
+            <div class="mb-5 h-0.5 w-10 rounded-full bg-accentCoral"></div>
+            <div class="mb-4 text-accentCoral">
+              <!-- Icono genérico (capas) -->
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <path d="M12 3 3 8l9 5 9-5-9-5Z" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M3 12l9 5 9-5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M3 16l9 5 9-5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h2 class="font-display text-lg font-semibold text-hi">Título de la función 2</h2>
+            <p class="mt-2 text-sm leading-relaxed text-lo">Una frase que explique qué hace y por qué importa para quien lo usa.</p>
+          </div>
+
+          <!-- Tarjeta 3 -->
+          <div class="rounded-xl border border-edge bg-surface p-6">
+            <div class="mb-5 h-0.5 w-10 rounded-full bg-accentTeal"></div>
+            <div class="mb-4 text-accentTeal">
+              <!-- Icono genérico (escudo) -->
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <path d="M12 3 4 6v6c0 5 3.5 7.5 8 9 4.5-1.5 8-4 8-9V6l-8-3Z" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h2 class="font-display text-lg font-semibold text-hi">Título de la función 3</h2>
+            <p class="mt-2 text-sm leading-relaxed text-lo">Una frase que explique qué hace y por qué importa para quien lo usa.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= MÉTRICAS / ESTADÍSTICAS ======================= -->
+    <!-- TODO: cambiar los 3 números y sus etiquetas por las métricas reales del proyecto
+         (líneas de código, usuarios en la demo, APIs integradas, precisión del modelo...) -->
+    <section class="border-t border-edge bg-surface">
+      <div class="mx-auto max-w-6xl px-6 py-20 md:py-24">
+        <div class="grid grid-cols-1 divide-y divide-edge md:grid-cols-3 md:divide-x md:divide-y-0">
+
+          <div class="py-6 text-center md:py-0 md:px-8">
+            <p class="tabular font-display text-5xl font-semibold text-accentViolet md:text-6xl">24</p>
+            <p class="mt-2 text-sm text-lo">horas de hackathon</p>
+          </div>
+
+          <div class="py-6 text-center md:py-0 md:px-8">
+            <p class="tabular font-display text-5xl font-semibold text-accentCoral md:text-6xl">5</p>
+            <p class="mt-2 text-sm text-lo">personas en el equipo</p>
+          </div>
+
+          <div class="py-6 text-center md:py-0 md:px-8">
+            <p class="tabular font-display text-5xl font-semibold text-accentTeal md:text-6xl">100%</p>
+            <p class="mt-2 text-sm text-lo">funcional en la demo</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======================= FOOTER ======================= -->
+  <!-- TODO: cambiar el nombre, actualizar el año y, si hace falta, añadir enlaces -->
+  <footer class="border-t border-edge bg-bg">
+    <div class="mx-auto max-w-6xl px-6 py-10">
+      <div class="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+        <p class="font-display text-sm font-semibold text-hi">Nexus</p>
+        <p class="text-sm text-lo">© 2026 Nexus. Proyecto de hackathon.</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
