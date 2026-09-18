@@ -4,8 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<title>ShellAcademy — Plataforma Educativa OT</title>
-<meta name="description" content="Panel de control gamificado para aprender automatización industrial: 5 niveles OT con briefing teórico y desafíos de diagnóstico." />
+<title>CoreLab — Interactive Engineering Simulator</title>
+<meta name="description" content="CoreLab: simulador interactivo de ingeniería. Resuelve incidentes reales de infraestructura industrial y consigue tus certificaciones técnicas." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -61,6 +61,12 @@
   }
   .aparece { animation: aparecer 0.28s cubic-bezier(0.22, 1, 0.36, 1) both; }
 
+  @keyframes desvanecer {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(-6px); }
+  }
+  .desvanece { animation: desvanecer 0.18s ease-in both; }
+
   @keyframes popIn {
     0%   { transform: scale(0.94) translateY(10px); opacity: 0 }
     100% { transform: scale(1)    translateY(0);    opacity: 1 }
@@ -91,7 +97,7 @@
   #terminal-log::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
 
   @media (prefers-reduced-motion: reduce) {
-    .aparece, .pop-in, .toast-in, .shake { animation: none !important; }
+    .aparece, .desvanece, .pop-in, .toast-in, .shake { animation: none !important; }
   }
 </style>
 </head>
@@ -106,11 +112,14 @@
           <path d="M3 20V9l5 3V9l5 3V6l5 3v11H3Z" stroke-linejoin="round"/>
           <path d="M7.5 20v-3.5M12.5 20v-3.5M17 20v-3.5" stroke-linecap="round"/>
         </svg>
-        Shell<span class="text-neon">Academy</span>
+        <span class="flex flex-col leading-tight">
+          <span class="text-lg font-bold tracking-tight text-hi">Core<span class="text-neon">Lab</span></span>
+          <span class="text-[10px] font-medium uppercase tracking-[0.18em] text-lo">Interactive Engineering Simulator</span>
+        </span>
       </div>
       <div class="flex flex-wrap items-center gap-3 text-xs">
-        <span id="badge-mundo" class="rounded-full border border-edge bg-panel px-3 py-1 text-lo">Nivel 1 · Nivel Físico y de Comunicaciones</span>
-        <span id="badge-rango" class="rounded-full border border-neon/50 bg-neon/10 px-3 py-1 font-bold text-neon">Rango Alumno</span>
+        <span id="badge-mundo" class="rounded-full border border-edge bg-panel px-3 py-1 text-lo">Módulo: Infraestructura Física</span>
+        <span id="badge-rango" class="rounded-full border border-neon/50 bg-neon/10 px-3 py-1 font-semibold text-neon">Certificación: Técnico Junior</span>
         <span id="badge-xp" class="tabular rounded-full border border-edge bg-panel px-3 py-1 font-bold text-hi">0 XP</span>
       </div>
     </div>
@@ -140,14 +149,14 @@
    <div id="vista-juego">
 
     <!-- ======================= SELECTOR DE MUNDO ======================= -->
-    <section aria-label="Niveles" class="mb-7">
-      <p class="mb-3 text-[11px] uppercase tracking-[0.2em] text-lo">Niveles</p>
+    <section aria-label="Módulos" class="mb-7">
+      <p class="mb-3 text-[11px] uppercase tracking-[0.2em] text-lo">Módulos</p>
       <div id="lista-mundos" class="grid gap-2 sm:grid-cols-3 lg:grid-cols-5"></div>
     </section>
 
-    <!-- ======================= ESCALERA DE RANGOS ======================= -->
-    <section aria-label="Progresión de rangos" class="mb-7">
-      <p class="mb-3 text-[11px] uppercase tracking-[0.2em] text-lo">Progresión de rango</p>
+    <!-- ======================= NIVELES DE CERTIFICACIÓN ======================= -->
+    <section aria-label="Niveles de certificación" class="mb-7">
+      <p class="mb-3 text-[11px] uppercase tracking-[0.2em] text-lo">Niveles de certificación</p>
       <ol id="lista-rangos" class="grid grid-cols-2 gap-2 text-xs md:grid-cols-4"></ol>
     </section>
 
@@ -156,13 +165,13 @@
 
       <div class="flex flex-wrap items-center gap-3 border-b border-edge bg-panel px-5 py-3.5 md:px-7">
         <span class="led h-2.5 w-2.5 rounded-full bg-neon" aria-hidden="true"></span>
-        <span id="titulo-ventana" class="text-xs font-semibold text-hi">Panel de diagnóstico · Nivel 1</span>
+        <span id="titulo-ventana" class="text-xs font-semibold text-hi">Panel de diagnóstico · Módulo 1</span>
         <span class="ml-auto rounded-md border border-edge bg-bg px-2.5 py-1 text-[11px] text-lo">SISTEMA EN LÍNEA</span>
       </div>
 
       <div class="border-b border-edge px-5 py-4 md:px-7">
         <div class="mb-2 flex items-center justify-between text-[11px] text-lo">
-          <span>Progreso del rango · desafío <span id="reto-actual" class="tabular text-hi">1</span>/<span id="reto-total" class="tabular text-hi">4</span></span>
+          <span>Calibración de sistemas · incidente <span id="reto-actual" class="tabular text-hi">1</span>/<span id="reto-total" class="tabular text-hi">4</span></span>
           <span id="xp-counter" class="tabular font-bold text-neon">XP: 0</span>
         </div>
         <div id="barra-progreso-wrap" class="h-2 w-full overflow-hidden rounded-full bg-bg" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
@@ -177,18 +186,18 @@
 
       <div class="px-5 py-7 md:px-7 md:py-9">
         <div class="flex flex-wrap items-center gap-3">
-          <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-neon">Desafío del sistema</p>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-neon">Incidente a resolver</p>
           <span id="badge-enemigo" class="rounded-md border border-danger/50 bg-danger/10 px-2.5 py-1 text-[11px] font-semibold text-danger">BOT-01</span>
           <button id="btn-briefing" type="button"
             class="ml-auto rounded-lg border border-edge px-3 py-1.5 text-[11px] text-lo transition-colors hover:border-neon hover:text-neon focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon">
             📋 Ver briefing
           </button>
         </div>
-        <h1 id="texto-pregunta" class="mt-4 text-lg font-semibold leading-relaxed text-hi md:text-2xl">Cargando desafío…</h1>
+        <h1 id="texto-pregunta" class="mt-4 text-lg font-semibold leading-relaxed text-hi md:text-2xl">Cargando incidente…</h1>
 
         <!-- MODO 1: entrada de diagnóstico -->
         <form id="zona-input" class="aparece mt-7" autocomplete="off">
-          <label for="comando" class="text-[11px] font-medium text-lo">Introduce tu diagnóstico</label>
+          <label for="comando" class="text-[11px] font-medium text-lo">Introduce el diagnóstico del incidente</label>
           <div id="input-wrap" class="mt-2 flex items-center gap-3 rounded-xl border border-edge bg-bg px-4 transition-colors focus-within:border-neon focus-within:ring-2 focus-within:ring-neon/25">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-neon" aria-hidden="true">
               <circle cx="11" cy="11" r="7" /><path d="m20 20-3.2-3.2" stroke-linecap="round"/>
@@ -204,7 +213,7 @@
             type="submit"
             class="mt-4 w-full rounded-xl bg-neon px-6 py-3.5 text-sm font-semibold text-bg shadow-lg shadow-neon/10 transition-all hover:bg-neonDim hover:text-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
           >
-            Diagnosticar
+            Ejecutar Diagnóstico
           </button>
         </form>
 
@@ -217,8 +226,8 @@
               </svg>
             </span>
             <div>
-              <p class="text-xs font-semibold text-danger">MODO EMERGENCIA ACTIVADO</p>
-              <p class="mt-1 text-xs text-lo">Diagnóstico no reconocido. Entrada manual bloqueada: selecciona el módulo correcto para restablecer el sistema.</p>
+              <p class="text-xs font-semibold text-danger">MODO CONTINGENCIA ACTIVADO</p>
+              <p class="mt-1 text-xs text-lo">Diagnóstico no reconocido. Entrada manual bloqueada: selecciona el módulo de hardware correcto para restablecer el sistema.</p>
             </div>
           </div>
           <div id="opciones-test" class="grid gap-3 sm:grid-cols-2" role="group" aria-label="Opciones de respuesta"></div>
@@ -227,14 +236,14 @@
         <!-- MODO 3: rango completado -->
         <div id="zona-fin" class="mt-7 hidden">
           <div class="rounded-xl border border-exito/50 bg-exito/10 px-5 py-6 text-center">
-            <p class="text-lg font-bold text-exito">RANGO SUPERADO</p>
+            <p class="text-lg font-bold text-exito">CERTIFICACIÓN SUPERADA</p>
             <p id="texto-fin" class="mt-2 text-xs text-lo"></p>
             <div class="mt-5 flex flex-wrap justify-center gap-3">
               <button id="btn-continuar" type="button" class="rounded-lg bg-neon px-5 py-2.5 text-sm font-bold text-bg transition-colors hover:bg-neonDim hover:text-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
                 Continuar
               </button>
               <button id="btn-repetir" type="button" class="rounded-lg border border-neon px-5 py-2.5 text-sm font-bold text-neon transition-colors hover:bg-neon hover:text-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
-                Repetir rango
+                Repetir certificación
               </button>
             </div>
           </div>
@@ -243,7 +252,7 @@
     </section>
 
     <div class="mt-6 flex flex-wrap items-center justify-between gap-3 text-[11px] text-lo">
-      <span id="pie-resumen">ShellAcademy · demo de hackathon</span>
+      <span id="pie-resumen">CoreLab · demo de hackathon</span>
       <button id="btn-reset" type="button" class="rounded border border-edge px-3 py-1.5 transition-colors hover:border-danger hover:text-danger">
         Reiniciar progreso
       </button>
@@ -285,7 +294,7 @@
             <tr>
               <th scope="col" class="px-5 py-3 font-medium md:px-7">#</th>
               <th scope="col" class="px-3 py-3 font-medium">Jugador</th>
-              <th scope="col" class="px-3 py-3 font-medium">Rango actual</th>
+              <th scope="col" class="px-3 py-3 font-medium">Certificación</th>
               <th scope="col" class="px-3 py-3 text-right font-medium">Puntos XP</th>
               <th scope="col" class="px-5 py-3 text-right font-medium md:px-7">Acción</th>
             </tr>
@@ -328,7 +337,7 @@
           type="button"
           class="rounded-lg bg-exito px-4 py-2 text-xs font-semibold text-bg transition-colors hover:bg-exitoDim hover:text-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-exito focus-visible:ring-offset-2 focus-visible:ring-offset-panel"
         >
-          Siguiente desafío
+          Siguiente incidente
         </button>
         <p class="text-[11px] text-lo">
           Avanza solo en <span id="cuenta-atras" class="tabular font-semibold text-exito">10</span>s
@@ -353,7 +362,7 @@
 
       <div class="max-h-[70vh] overflow-y-auto px-6 py-7 md:px-8">
         <p class="text-[11px] uppercase tracking-[0.2em] text-neon">Briefing de teoría</p>
-        <h2 id="briefing-titulo" class="mt-2 text-xl font-bold text-hi md:text-2xl">Nivel 1</h2>
+        <h2 id="briefing-titulo" class="mt-2 text-xl font-bold text-hi md:text-2xl">Módulo 1</h2>
 
         <div class="mt-5 rounded-lg border border-neon/30 bg-neon/5 px-4 py-3">
           <p class="text-[11px] font-bold uppercase tracking-wider text-neon">Misión</p>
@@ -458,11 +467,11 @@
     "use strict";
     /* ============================================================
        BANCO DE PREGUNTAS — Game Design Document "Plataforma OT"
-       5 niveles. En cada uno, los rangos marcan el tipo de enemigo:
-         Rango Alumno  -> Enemigos menores (fácil)
-         Rango Profe   -> Sub-jefes (medio)
-         Rango Experto -> Jefes de nivel (difícil)
-         Rango Nikola Tesla -> jefe supremo, lo más duro de los 5 niveles
+       5 módulos. En cada uno, la certificación marca el tipo de incidente:
+         Técnico Junior        -> incidentes básicos (fácil)
+         Operador Certificado  -> incidentes críticos (medio)
+         Ingeniero de Sistemas -> fallos mayores (difícil)
+         Arquitecto de Infraestructura -> certificación final, lo más duro
        ============================================================ */
 
     /* Set de arranque del Nivel 1, con los datos exactos de la especificación. */
@@ -473,7 +482,7 @@
         respuestaInput: "PLC",
         opcionesTest: ["PLC", "Router", "Sensor", "Firewall"],
         respuestaTest: "PLC",
-        explicacion: "¡Correcto! +50 XP. El PLC (Controlador Lógico Programable) toma las decisiones críticas locales."
+        explicacion: "[✓] Diagnóstico Exitoso. El PLC procesa la lógica y toma las decisiones críticas en tiempo real a nivel local."
       },
       {
         id: 2,
@@ -481,7 +490,7 @@
         respuestaInput: "Sensor",
         opcionesTest: ["Actuador", "Sensor", "Switch", "HMI"],
         respuestaTest: "Sensor",
-        explicacion: "¡Parámetro estabilizado! +50 XP. Los sensores son los 'ojos y oídos' de la planta industrial."
+        explicacion: "[✓] Telemetría Verificada. Los sensores convierten magnitudes físicas en señales eléctricas para el sistema."
       },
       {
         id: 3,
@@ -489,7 +498,7 @@
         respuestaInput: "SCADA",
         opcionesTest: ["PLC", "Actuador", "SCADA", "Ping"],
         respuestaTest: "SCADA",
-        explicacion: "¡Visibilidad recuperada! +100 XP. El sistema SCADA (o HMI) permite supervisar toda la fábrica desde el panel."
+        explicacion: "[✓] Conexión Establecida. El sistema SCADA (o HMI) proporciona la interfaz visual para supervisar toda la infraestructura."
       }
     ];
 
@@ -497,12 +506,12 @@
     const arranqueNivel1 = [
       Object.assign({ enemigo: "BOT-01", alias: ["el plc", "controlador logico programable"] }, preguntasNivel1[0]),
       Object.assign({ enemigo: "BOT-02", alias: ["un sensor", "el sensor"] }, preguntasNivel1[1]),
-      Object.assign({ enemigo: "BOT-03", alias: ["hmi", "scada o hmi", "el scada"], xp: 100 }, preguntasNivel1[2])
+      Object.assign({ enemigo: "BOT-03", alias: ["hmi", "scada o hmi", "el scada"] }, preguntasNivel1[2])
     ];
 
     const BANCO = {
       1: {
-        nombre: "Nivel Físico y de Comunicaciones",
+        nombre: "Infraestructura Física",
         mision: "Adéntrate en las profundidades de la fábrica y descubre las piezas que la hacen funcionar.",
         briefing: "Toda infraestructura industrial (OT) tiene elementos físicos clave. Los Sensores son los «ojos y oídos» de la planta: miden cosas como temperatura o presión. Los Actuadores son los «músculos», como motores o válvulas que ejecutan acciones físicas. Toda esa información viaja hacia el PLC (Controlador Lógico Programable), el «cerebro local» encargado de tomar decisiones rápidas. A su vez, los PLCs se conectan al sistema SCADA, una pantalla central que permite a los operadores humanos supervisar y controlar toda la fábrica desde una sala de control.",
         alumno: arranqueNivel1.concat([
@@ -846,7 +855,7 @@
       },
 
       4: {
-        nombre: "Diagnóstico",
+        nombre: "Diagnóstico de Averías",
         mision: "La estación de bombeo ha caído. Eres el técnico de guardia. ¡Encuentra el fallo!",
         briefing: "Las redes industriales no son perfectas: los equipos fallan. El Diagnóstico es el arte de jugar a los detectives. Si una máquina pierde conexión, investiga metódicamente. Primero la capa física: ¿hay energía, están conectados los cables? Luego la red: ¿puedo hacer ping al equipo, hay direcciones IP duplicadas? Finalmente la aplicación: ¿se han desconfigurado los parámetros, el SCADA lee el registro incorrecto del PLC? Un analizador de tráfico te permite ver los paquetes invisibles que vuelan por el cable y encontrar el error.",
         alumno: [
@@ -1130,10 +1139,10 @@
        ============================================================ */
 
     const RANGOS = [
-      { clave: "alumno",  nombre: "Rango Alumno",       sub: "Enemigos menores" },
-      { clave: "profe",   nombre: "Rango Profe",        sub: "Sub-jefes" },
-      { clave: "experto", nombre: "Rango Experto",      sub: "Jefes de nivel" },
-      { clave: "tesla",   nombre: "Rango Nikola Tesla", sub: "Jefe supremo" }
+      { clave: "alumno",  nombre: "Técnico Junior",              sub: "Certificación 1 · incidentes básicos" },
+      { clave: "profe",   nombre: "Operador Certificado",        sub: "Certificación 2 · incidentes críticos" },
+      { clave: "experto", nombre: "Ingeniero de Sistemas",       sub: "Certificación 3 · fallos mayores" },
+      { clave: "tesla",   nombre: "Arquitecto de Infraestructura", sub: "Certificación final" }
     ];
 
     const XP_POR_RETO = 50;
@@ -1276,7 +1285,7 @@
       if (rango === "alumno") return true;
       if (rango === "profe") return estaCompletado(mundo, "alumno");
       if (rango === "experto") return estaCompletado(mundo, "profe");
-      // Nikola Tesla exige haber cerrado el rango Experto de los cinco mundos.
+      // Arquitecto exige la certificación de Ingeniero de Sistemas en los cinco módulos.
       return Object.keys(BANCO).every(function (m) { return estaCompletado(m, "experto"); });
     }
 
@@ -1297,7 +1306,7 @@
             ? "border-neon bg-neon/10 text-neon"
             : "border-edge bg-panel text-lo hover:border-neon hover:text-hi");
         boton.innerHTML =
-          '<span class="block font-bold">Nivel ' + id + (cerrado ? ' ✓' : '') + '</span>' +
+          '<span class="block font-bold">Módulo ' + id + (cerrado ? ' ✓' : '') + '</span>' +
           '<span class="mt-0.5 block text-[11px] opacity-80 nombre-mundo"></span>';
         boton.querySelector(".nombre-mundo").textContent = mundo.nombre;
         boton.addEventListener("click", function () { irA(Number(id), "alumno"); });
@@ -1347,13 +1356,13 @@
     function renderCabecera() {
       const rango = RANGOS.find(function (r) { return r.clave === estado.rango; });
       elBadgeMundo.textContent = estado.rango === "tesla"
-        ? "Jefe supremo · los 5 niveles"
-        : "Nivel " + estado.mundo + " · " + BANCO[estado.mundo].nombre;
-      elBadgeRango.textContent = rango.nombre;
+        ? "Certificación final · los 5 módulos"
+        : "Módulo: " + BANCO[estado.mundo].nombre;
+      elBadgeRango.textContent = "Certificación: " + rango.nombre;
       elBadgeXp.textContent = estado.xp + " XP";
       elVentana.textContent = estado.rango === "tesla"
-        ? "Panel de diagnóstico · Jefe supremo"
-        : "Panel de diagnóstico · Nivel " + estado.mundo;
+        ? "Panel de diagnóstico · Certificación final"
+        : "Panel de diagnóstico · Módulo " + estado.mundo;
     }
 
     function actualizarHud(resueltos) {
@@ -1382,12 +1391,13 @@
       elZonaTest.classList.add("hidden");
       elOpciones.innerHTML = "";
       elZonaInput.classList.remove("hidden");
+      elZonaInput.classList.remove("desvanece");
       reiniciarAnimacion(elZonaInput);
       elComando.value = "";
       elComando.disabled = false;
 
       actualizarHud(estado.indice);
-      escribirLog("Desafío entrante · " + reto.enemigo + " · Nivel " + estado.mundo, "sys");
+      escribirLog("Incidente entrante · " + reto.enemigo + " · Módulo " + estado.mundo, "sys");
 
       if (!window.matchMedia("(hover: none)").matches) elComando.focus();
     }
@@ -1459,13 +1469,11 @@
       fallosRango += 1;
       escribirLog("Diagnóstico enviado: " + intento, "user");
       escribirLog("Diagnóstico incorrecto. Entrada manual bloqueada.", "err");
-      escribirLog("Modo emergencia: 4 módulos disponibles.", "sys");
+      escribirLog("Modo contingencia: 4 módulos de hardware disponibles.", "sys");
 
-      elInputWrap.classList.add("shake");
-      setTimeout(function () { elInputWrap.classList.remove("shake"); }, 500);
-
-      // Desaparecen el input y el botón Diagnosticar
-      elZonaInput.classList.add("hidden");
+      // El bloque de entrada se retira con un fundido rápido antes de ceder el sitio
+      elComando.disabled = true;
+      elZonaInput.classList.add("desvanece");
 
       elOpciones.innerHTML = "";
       reto.opcionesTest.forEach(function (opcion, i) {
@@ -1484,8 +1492,13 @@
         elOpciones.appendChild(boton);
       });
 
-      elZonaTest.classList.remove("hidden");
-      reiniciarAnimacion(elZonaTest);
+      temporizadores.push(setTimeout(function () {
+        elZonaInput.classList.remove("desvanece");
+        elZonaInput.classList.add("hidden");
+        elComando.disabled = false;
+        elZonaTest.classList.remove("hidden");
+        reiniciarAnimacion(elZonaTest);
+      }, 180));
     }
 
     function elegirOpcion(boton, opcion, reto) {
@@ -1501,11 +1514,11 @@
         fallosReto += 1;
         fallosRango += 1;
         boton.disabled = true;
-        // Fallo de energía: el módulo se apaga
+        // Caída de tensión: el módulo se apaga al 30 % y queda inservible
         boton.className =
-          "flex items-start gap-3 rounded-xl border border-edge bg-panel px-4 py-3.5 text-left text-sm " +
-          "text-lo opacity-40 line-through cursor-not-allowed transition-all duration-300";
-        escribirLog("Módulo sin energía: " + opcion, "err");
+          "flex items-start gap-3 rounded-xl border border-slate-700 bg-slate-700/30 px-4 py-3.5 text-left text-sm " +
+          "text-slate-500 opacity-30 cursor-not-allowed transition-all duration-300";
+        escribirLog("Caída de tensión en el módulo: " + opcion, "err");
       }
     }
 
@@ -1534,21 +1547,21 @@
       reiniciarAnimacion(elZonaFin);
 
       if (estado.rango === "tesla") {
-        elPregunta.textContent = "Has derrotado al jefe supremo. Fundamentos industriales dominados.";
-        elTextoFin.textContent = "Rango Nikola Tesla completado con " + estado.xp + " XP. No queda nada por hackear… por ahora.";
-        $("btn-continuar").textContent = "Volver al Nivel 1";
+        elPregunta.textContent = "Certificación final superada. Fundamentos de infraestructura industrial dominados.";
+        elTextoFin.textContent = "Certificación de Arquitecto de Infraestructura completada con " + estado.xp + " XP. Infraestructura bajo control.";
+        $("btn-continuar").textContent = "Volver al Módulo 1";
       } else if (siguiente && rangoDesbloqueado(estado.mundo, siguiente.clave)) {
-        elPregunta.textContent = rangoActual.nombre + " superado en el Nivel " + estado.mundo + ".";
-        elTextoFin.textContent = "Desbloqueado: " + siguiente.nombre + " (" + siguiente.sub + "). XP total: " + estado.xp + ".";
-        $("btn-continuar").textContent = "Ir a " + siguiente.nombre;
+        elPregunta.textContent = "Certificación de " + rangoActual.nombre + " superada en el Módulo " + estado.mundo + ".";
+        elTextoFin.textContent = "Desbloqueada la certificación de " + siguiente.nombre + ". XP total: " + estado.xp + ".";
+        $("btn-continuar").textContent = "Certificación: " + siguiente.nombre;
       } else {
         elPregunta.textContent = rangoActual.nombre + " superado en el Nivel " + estado.mundo + ".";
-        elTextoFin.textContent = "Nivel " + estado.mundo + " cerrado. Completa el rango Experto de los 5 niveles para desbloquear el Rango Nikola Tesla. XP total: " + estado.xp + ".";
-        $("btn-continuar").textContent = "Siguiente nivel";
+        elTextoFin.textContent = "Módulo " + estado.mundo + " cerrado. Consigue la certificación de Ingeniero de Sistemas en los 5 módulos para optar a Arquitecto de Infraestructura. XP total: " + estado.xp + ".";
+        $("btn-continuar").textContent = "Siguiente módulo";
       }
 
       actualizarHud(retosDe(estado.mundo, estado.rango).length);
-      escribirLog(rangoActual.nombre + " completado. XP total: " + estado.xp, "ok");
+      escribirLog("Certificación de " + rangoActual.nombre + " completada. XP total: " + estado.xp, "ok");
       renderMundos();
       renderRangos();
       renderCabecera();
@@ -1584,8 +1597,8 @@
       escribirLog("Conexión con la planta establecida.", "sys");
       escribirLog(
         (rango === "tesla"
-          ? "JEFE SUPREMO · Rango Nikola Tesla"
-          : "Nivel " + mundo + ": " + BANCO[mundo].nombre + " · " + RANGOS.find(function (r) { return r.clave === rango; }).nombre),
+          ? "Certificación final · Arquitecto de Infraestructura"
+          : "Módulo " + mundo + ": " + BANCO[mundo].nombre + " · Certificación " + RANGOS.find(function (r) { return r.clave === rango; }).nombre),
         "sys"
       );
       renderMundos();
@@ -1651,15 +1664,15 @@
       const nivel = BANCO[mundo];
       if (!nivel) return;
 
-      $("briefing-titulo").textContent = "Nivel " + mundo + ": " + nivel.nombre;
+      $("briefing-titulo").textContent = "Módulo " + mundo + ": " + nivel.nombre;
       $("briefing-mision").textContent = nivel.mision;
       $("briefing-teoria").textContent = nivel.briefing;
 
       // Resumen de los enemigos que esperan en este nivel
       const tramos = [
-        { clave: "alumno",  etiqueta: "Enemigos menores" },
-        { clave: "profe",   etiqueta: "Sub-jefes" },
-        { clave: "experto", etiqueta: "Jefes de nivel" }
+        { clave: "alumno",  etiqueta: "Incidentes básicos" },
+        { clave: "profe",   etiqueta: "Incidentes críticos" },
+        { clave: "experto", etiqueta: "Fallos mayores" }
       ];
       const caja = $("briefing-enemigos");
       caja.innerHTML = "";
@@ -1678,7 +1691,7 @@
         lista.textContent = nombres.join(" · ");
         const cuenta = document.createElement("p");
         cuenta.className = "mt-1 text-lo";
-        cuenta.textContent = retos.length + " retos";
+        cuenta.textContent = retos.length + " incidentes";
         bloque.appendChild(titulo);
         bloque.appendChild(lista);
         bloque.appendChild(cuenta);
@@ -1706,25 +1719,25 @@
         id: "primera-sangre",
         icono: "🩸",
         nombre: "Primera Sangre",
-        desc: "Acierta el primer desafío escribiendo el diagnóstico, sin caer al modo emergencia."
+        desc: "Resuelve el primer incidente escribiendo el diagnóstico, sin caer al modo contingencia."
       },
       {
         id: "persistencia",
         icono: "🔁",
         nombre: "Persistencia",
-        desc: "Falla tres veces en un mismo desafío y acábalo acertando."
+        desc: "Falla tres veces en un mismo incidente y acábalo resolviendo."
       },
       {
         id: "experto-ot",
         icono: "🏭",
         nombre: "Experto OT",
-        desc: "Completa los tres rangos del Nivel 1: Físico y de Comunicaciones."
+        desc: "Consigue las tres certificaciones del Módulo 1: Infraestructura Física."
       },
       {
         id: "comando-sudo",
         icono: "⚡",
         nombre: "Comando Sudo",
-        desc: "Supera un rango entero sin fallar ni una sola vez."
+        desc: "Supera una certificación entera sin fallar ni una sola vez."
       }
     ];
 
@@ -1768,7 +1781,7 @@
 
       const resueltos = Object.keys(estado.resueltos).length;
       elResumenRetos.textContent =
-        resueltos + " de " + TOTAL_RETOS + " retos resueltos · " + estado.xp + " XP totales";
+        resueltos + " de " + TOTAL_RETOS + " incidentes resueltos · " + estado.xp + " XP totales";
 
       const desbloqueados = LOGROS.filter(function (l) { return estado.logros[l.id]; }).length;
       elContadorLog.textContent = desbloqueados + "/" + LOGROS.length;
@@ -1828,28 +1841,28 @@
       etsit: {
         nombre: "Liga ETSIT UPM",
         jugadores: [
-          { nombre: "xX_RootMaster_Xx", rango: "Rango Nikola Tesla", xp: 2450 },
-          { nombre: "CyberNinja",       rango: "Rango Experto",      xp: 1780 },
-          { nombre: "s3gm3nt4d0r",      rango: "Rango Profe",        xp: 940 },
-          { nombre: "ladder_lover",     rango: "Rango Alumno",       xp: 310 }
+          { nombre: "xX_RootMaster_Xx", rango: "Arquitecto de Infraestructura", xp: 2450 },
+          { nombre: "CyberNinja",       rango: "Ingeniero de Sistemas",      xp: 1780 },
+          { nombre: "s3gm3nt4d0r",      rango: "Operador Certificado",        xp: 940 },
+          { nombre: "ladder_lover",     rango: "Técnico Junior",       xp: 310 }
         ]
       },
       clase: {
         nombre: "Liga de Clase",
         jugadores: [
-          { nombre: "PLC_Whisperer", rango: "Rango Experto", xp: 1120 },
-          { nombre: "modbus_kid",    rango: "Rango Profe",   xp: 760 },
-          { nombre: "AnaSCADA",      rango: "Rango Profe",   xp: 620 },
-          { nombre: "sudo_pls",      rango: "Rango Alumno",  xp: 180 }
+          { nombre: "PLC_Whisperer", rango: "Ingeniero de Sistemas", xp: 1120 },
+          { nombre: "modbus_kid",    rango: "Operador Certificado",   xp: 760 },
+          { nombre: "AnaSCADA",      rango: "Operador Certificado",   xp: 620 },
+          { nombre: "sudo_pls",      rango: "Técnico Junior",  xp: 180 }
         ]
       },
       global: {
         nombre: "Global",
         jugadores: [
-          { nombre: "t3sl4_c0il",     rango: "Rango Nikola Tesla", xp: 5120 },
-          { nombre: "xX_RootMaster_Xx", rango: "Rango Nikola Tesla", xp: 2450 },
-          { nombre: "0xDeterminismo", rango: "Rango Experto",      xp: 2210 },
-          { nombre: "CyberNinja",     rango: "Rango Experto",      xp: 1780 }
+          { nombre: "t3sl4_c0il",     rango: "Arquitecto de Infraestructura", xp: 5120 },
+          { nombre: "xX_RootMaster_Xx", rango: "Arquitecto de Infraestructura", xp: 2450 },
+          { nombre: "0xDeterminismo", rango: "Ingeniero de Sistemas",      xp: 2210 },
+          { nombre: "CyberNinja",     rango: "Ingeniero de Sistemas",      xp: 1780 }
         ]
       }
     };
@@ -1863,7 +1876,7 @@
 
     function rangoDelJugador() {
       const rango = RANGOS.find(function (r) { return r.clave === estado.rango; });
-      return rango ? rango.nombre : "Rango Alumno";
+      return rango ? rango.nombre : "Técnico Junior";
     }
 
     function renderLiga() {
@@ -1989,7 +2002,7 @@
 
     // Pie de página con las cifras reales del banco
     $("pie-resumen").textContent =
-      "ShellAcademy · " + Object.keys(BANCO).length + " niveles · " + TOTAL_RETOS + " retos · demo de hackathon";
+      "CoreLab · " + Object.keys(BANCO).length + " módulos · " + TOTAL_RETOS + " incidentes · demo de hackathon";
 
     /* ---------- Arranque ---------- */
     cargar();
