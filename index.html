@@ -106,9 +106,30 @@
         <span id="badge-xp" class="tabular rounded-full border border-edge bg-panel px-3 py-1 font-bold text-hi">0 XP</span>
       </div>
     </div>
+
+    <!-- Navegación entre vistas (sin recargar página) -->
+    <nav class="border-t border-edge" aria-label="Vistas">
+      <div class="mx-auto flex max-w-5xl flex-wrap items-center gap-2 px-6 py-2.5 text-xs">
+        <button id="nav-juego" type="button" aria-pressed="true"
+          class="rounded-lg border border-neon bg-neon/10 px-3 py-1.5 font-bold text-neon transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
+          🎮 Juego (Terminal)
+        </button>
+        <button id="nav-ligas" type="button" aria-pressed="false"
+          class="rounded-lg border border-edge bg-panel px-3 py-1.5 font-bold text-lo transition-colors hover:border-neon hover:text-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
+          ⚔️ Ligas
+        </button>
+        <button id="nav-logros" type="button" aria-haspopup="dialog" aria-expanded="false"
+          class="ml-auto rounded-lg border border-edge bg-panel px-3 py-1.5 font-bold text-lo transition-colors hover:border-neon hover:text-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
+          🏆 Logros <span id="contador-logros" class="tabular text-neon">0/4</span>
+        </button>
+      </div>
+    </nav>
   </header>
 
   <main class="mx-auto max-w-5xl px-6 py-8 md:py-12">
+
+   <!-- ======================= VISTA: JUEGO ======================= -->
+   <div id="vista-juego">
 
     <!-- ======================= SELECTOR DE MUNDO ======================= -->
     <section aria-label="Mundos" class="mb-7">
@@ -201,6 +222,59 @@
         Reiniciar progreso
       </button>
     </div>
+   </div><!-- /vista-juego -->
+
+   <!-- ======================= VISTA: LIGAS ======================= -->
+   <div id="vista-ligas" class="hidden">
+
+    <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="text-[11px] uppercase tracking-[0.2em] text-neon">Fantasy de hackers</p>
+        <h2 class="mt-2 text-2xl font-bold tracking-tight text-hi">Ligas competitivas</h2>
+        <p class="mt-1 text-xs text-lo">Clasificación por XP acumulada. Tu posición se recalcula con lo que ganas en la terminal.</p>
+      </div>
+      <div>
+        <label for="selector-liga" class="block text-[11px] text-lo">Liga</label>
+        <select
+          id="selector-liga"
+          class="mt-1.5 rounded-lg border border-edge bg-panel px-3 py-2 text-sm text-hi transition-colors hover:border-neon focus:border-neon focus:outline-none"
+        >
+          <option value="etsit">Liga ETSIT UPM</option>
+          <option value="clase">Liga de Clase</option>
+          <option value="global">Global</option>
+        </select>
+      </div>
+    </div>
+
+    <section class="relative overflow-hidden rounded-xl border border-edge bg-surface scanlines">
+      <div class="flex items-center gap-1.5 border-b border-edge bg-panel px-4 py-2.5">
+        <span class="h-2.5 w-2.5 rounded-full bg-edge"></span>
+        <span class="h-2.5 w-2.5 rounded-full bg-edge"></span>
+        <span class="h-2.5 w-2.5 rounded-full bg-neon/60"></span>
+        <span id="titulo-liga" class="ml-2 text-[11px] text-lo">alumno@shellacademy: ~/ligas</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[640px] text-left text-sm">
+          <caption class="sr-only">Clasificación de la liga seleccionada</caption>
+          <thead class="border-b border-edge text-[11px] uppercase tracking-wider text-lo">
+            <tr>
+              <th scope="col" class="px-5 py-3 font-medium md:px-7">#</th>
+              <th scope="col" class="px-3 py-3 font-medium">Jugador</th>
+              <th scope="col" class="px-3 py-3 font-medium">Rango actual</th>
+              <th scope="col" class="px-3 py-3 text-right font-medium">Puntos XP</th>
+              <th scope="col" class="px-5 py-3 text-right font-medium md:px-7">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-liga" class="divide-y divide-edge"></tbody>
+        </table>
+      </div>
+
+      <div class="border-t border-edge px-5 py-4 text-[11px] text-lo md:px-7">
+        <span id="resumen-liga"></span>
+      </div>
+    </section>
+   </div><!-- /vista-ligas -->
   </main>
 
   <!-- ======================= POP-UP DE ACIERTO ======================= -->
@@ -222,6 +296,86 @@
       <p class="mt-6 text-[11px] text-lo">
         Siguiente reto en <span id="cuenta-atras" class="tabular font-bold text-neon">3</span>s
       </p>
+    </div>
+  </div>
+
+  <!-- ======================= PANEL LATERAL DE LOGROS ======================= -->
+  <div
+    id="panel-logros"
+    class="fixed inset-0 z-50 hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="titulo-logros"
+  >
+    <div id="fondo-logros" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+
+    <aside class="absolute right-0 top-0 flex h-full w-full max-w-md flex-col border-l border-neon/40 bg-panel shadow-2xl">
+      <div class="flex items-center justify-between border-b border-edge px-6 py-4">
+        <h2 id="titulo-logros" class="text-lg font-bold text-hi">🏆 Logros</h2>
+        <button
+          id="cerrar-logros"
+          type="button"
+          aria-label="Cerrar panel de logros"
+          class="rounded-lg border border-edge px-3 py-1.5 text-xs text-lo transition-colors hover:border-danger hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon"
+        >
+          ✕ ESC
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto px-6 py-6">
+
+        <!-- Progreso general de usuario -->
+        <div class="rounded-xl border border-edge bg-bg p-5">
+          <div class="flex items-end justify-between">
+            <div>
+              <p class="text-[11px] uppercase tracking-[0.2em] text-lo">Nivel de usuario</p>
+              <p id="nivel-usuario" class="mt-1 text-2xl font-bold text-neon">Nivel 1</p>
+            </div>
+            <p id="nivel-xp" class="tabular text-xs text-lo">0 / 250 XP</p>
+          </div>
+          <div id="barra-nivel-wrap" class="mt-4 h-2 w-full overflow-hidden rounded-full bg-panel" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div id="barra-nivel" class="h-full w-0 rounded-full bg-neon transition-all duration-500 ease-out"></div>
+          </div>
+          <p id="resumen-retos" class="mt-3 text-[11px] text-lo"></p>
+        </div>
+
+        <!-- Cuadrícula de insignias -->
+        <p class="mt-7 text-[11px] uppercase tracking-[0.2em] text-lo">Insignias</p>
+        <div id="cuadricula-logros" class="mt-3 grid gap-3 sm:grid-cols-2"></div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ======================= MODAL DE RETO ENVIADO ======================= -->
+  <div
+    id="modal-reto"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 px-6 backdrop-blur-sm"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="titulo-reto"
+  >
+    <div class="pop-in relative w-full max-w-lg overflow-hidden rounded-xl border border-neon/50 bg-surface scanlines">
+      <div class="flex items-center gap-1.5 border-b border-edge bg-panel px-4 py-2.5">
+        <span class="h-2.5 w-2.5 rounded-full bg-edge"></span>
+        <span class="h-2.5 w-2.5 rounded-full bg-edge"></span>
+        <span class="h-2.5 w-2.5 rounded-full bg-neon/60"></span>
+        <span class="ml-2 text-[11px] text-lo">shellacademy — desafío OT</span>
+      </div>
+      <div class="px-6 py-7">
+        <h2 id="titulo-reto" class="text-sm leading-relaxed text-neon">
+          <span id="texto-reto"></span><span class="cursor">_</span>
+        </h2>
+        <p class="mt-4 text-[11px] text-lo">
+          El oponente tiene 24 h para aceptar. Si no responde, ganas la XP en disputa por incomparecencia.
+        </p>
+        <button
+          id="cerrar-reto"
+          type="button"
+          class="mt-6 w-full rounded-lg border border-neon px-5 py-2.5 text-sm font-bold text-neon transition-colors hover:bg-neon hover:text-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+        >
+          Cerrar
+        </button>
+      </div>
     </div>
   </div>
 
@@ -778,11 +932,15 @@
       rango: "alumno",
       indice: 0,
       xp: 0,
-      completados: {}   // "1:alumno" -> true
+      completados: {},  // "1:alumno" -> true
+      resueltos: {},    // id de reto -> true
+      logros: {}        // id de logro -> true
     };
 
     let bloqueado = false;
     let temporizadores = [];
+    let fallosReto = 0;    // fallos acumulados en el reto en curso
+    let fallosRango = 0;   // fallos acumulados en el rango en curso
 
     /* ---------- DOM ---------- */
     const $ = (id) => document.getElementById(id);
@@ -848,7 +1006,10 @@
     function guardar() {
       try {
         localStorage.setItem(CLAVE_GUARDADO, JSON.stringify({
-          xp: estado.xp, completados: estado.completados
+          xp: estado.xp,
+          completados: estado.completados,
+          resueltos: estado.resueltos,
+          logros: estado.logros
         }));
       } catch (e) { /* modo privado o almacenamiento bloqueado: seguimos igual */ }
     }
@@ -860,6 +1021,8 @@
         const datos = JSON.parse(crudo);
         if (datos && typeof datos.xp === "number") estado.xp = datos.xp;
         if (datos && datos.completados) estado.completados = datos.completados;
+        if (datos && datos.resueltos) estado.resueltos = datos.resueltos;
+        if (datos && datos.logros) estado.logros = datos.logros;
       } catch (e) { /* ignoramos progreso corrupto */ }
     }
 
@@ -975,6 +1138,7 @@
       if (!reto) { finalizarRango(); return; }
 
       elPregunta.textContent = reto.pregunta;
+      fallosReto = 0;
 
       // Modo consola restaurado en cada reto nuevo
       elZonaFin.classList.add("hidden");
@@ -991,11 +1155,19 @@
     }
 
     /* ---------- Acierto ---------- */
-    function acierto(reto) {
+    function acierto(reto, via) {
       bloqueado = true;
       estado.xp += XP_POR_RETO;
+      estado.resueltos[reto.id] = true;
+
+      // "Primera Sangre": primer reto resuelto a la primera, tecleado en la terminal.
+      if (via === "input" && reto.id === 1 && fallosReto === 0) desbloquearLogro("primera-sangre");
+      // "Persistencia": tres fallos en el mismo reto y aun así lo saca.
+      if (fallosReto >= 3) desbloquearLogro("persistencia");
+
       actualizarHud(estado.indice + 1);
       guardar();
+      renderLogros();
 
       escribirLog("[OK] Respuesta validada · +" + XP_POR_RETO + " XP", "ok");
 
@@ -1035,6 +1207,8 @@
 
     /* ---------- Fallo: castigo + tipo test ---------- */
     function activarModoTest(reto, intento) {
+      fallosReto += 1;
+      fallosRango += 1;
       escribirLog("> " + intento, "user");
       escribirLog("[ERR] '" + intento + "' no es una respuesta válida. Consola bloqueada.", "err");
       escribirLog("[SYS] Cargando modo asistido: 4 opciones disponibles.", "sys");
@@ -1071,9 +1245,11 @@
         Array.prototype.forEach.call(elOpciones.children, function (b) { b.disabled = true; });
         boton.className =
           "flex items-start gap-3 rounded-lg border-2 border-neon bg-neon/15 px-4 py-3 text-left text-sm font-bold text-neon";
-        acierto(reto);
+        acierto(reto, "test");
       } else {
         // Opción incorrecta: se descarta visualmente y deja de responder
+        fallosReto += 1;
+        fallosRango += 1;
         boton.disabled = true;
         boton.className =
           "flex items-start gap-3 rounded-lg border border-edge bg-panel px-4 py-3 text-left text-sm " +
@@ -1086,7 +1262,16 @@
     function finalizarRango() {
       limpiarTemporizadores();
       estado.completados[estado.mundo + ":" + estado.rango] = true;
+
+      // "Comando Sudo": rango entero sin un solo fallo.
+      if (fallosRango === 0) desbloquearLogro("comando-sudo");
+      // "Experto OT": los tres rangos del Mundo 1 cerrados.
+      if (["alumno", "profe", "experto"].every(function (r) { return estaCompletado(1, r); })) {
+        desbloquearLogro("experto-ot");
+      }
+
       guardar();
+      renderLogros();
 
       const indiceRango = RANGOS.findIndex(function (r) { return r.clave === estado.rango; });
       const siguiente = RANGOS[indiceRango + 1];
@@ -1142,6 +1327,7 @@
       estado.mundo = mundo;
       estado.rango = rango;
       estado.indice = 0;
+      fallosRango = 0;
       elLog.innerHTML = "";
       escribirLog("[SYS] Conectando con planta industrial… OK", "sys");
       escribirLog(
@@ -1174,7 +1360,7 @@
 
       if (coincide(intento, reto, reto.respuestaInput)) {
         escribirLog("> " + intento, "user");
-        acierto(reto);
+        acierto(reto, "input");
       } else {
         activarModoTest(reto, intento);
       }
@@ -1185,12 +1371,309 @@
     $("btn-reset").addEventListener("click", function () {
       estado.xp = 0;
       estado.completados = {};
+      estado.resueltos = {};
+      estado.logros = {};
       guardar();
+      renderLogros();
+      renderLiga();
       irA(1, "alumno");
+    });
+
+    /* ============================================================
+       SISTEMA DE LOGROS
+       ============================================================ */
+
+    const XP_POR_NIVEL = 250;
+
+    const LOGROS = [
+      {
+        id: "primera-sangre",
+        icono: "🩸",
+        nombre: "Primera Sangre",
+        desc: "Acierta el primer reto escribiendo directamente en la terminal, sin caer al modo asistido."
+      },
+      {
+        id: "persistencia",
+        icono: "🔁",
+        nombre: "Persistencia",
+        desc: "Falla tres veces en un mismo reto y acábalo acertando."
+      },
+      {
+        id: "experto-ot",
+        icono: "🏭",
+        nombre: "Experto OT",
+        desc: "Completa los tres rangos del Mundo 1: Sensores y Actuadores."
+      },
+      {
+        id: "comando-sudo",
+        icono: "⚡",
+        nombre: "Comando Sudo",
+        desc: "Supera un rango entero sin fallar ni una sola vez."
+      }
+    ];
+
+    const elPanelLogros  = $("panel-logros");
+    const elCuadricula   = $("cuadricula-logros");
+    const elNivelUsuario = $("nivel-usuario");
+    const elNivelXp      = $("nivel-xp");
+    const elBarraNivel   = $("barra-nivel");
+    const elBarraNivelW  = $("barra-nivel-wrap");
+    const elResumenRetos = $("resumen-retos");
+    const elContadorLog  = $("contador-logros");
+
+    function totalRetos() {
+      return Object.keys(BANCO).reduce(function (suma, m) {
+        return suma + ["alumno", "profe", "experto"].reduce(function (s, r) {
+          return s + BANCO[m][r].length;
+        }, 0);
+      }, 0);
+    }
+
+    const TOTAL_RETOS = totalRetos();
+
+    function desbloquearLogro(id) {
+      if (estado.logros[id]) return;            // ya estaba: no repetimos aviso
+      estado.logros[id] = true;
+      const logro = LOGROS.find(function (l) { return l.id === id; });
+      if (logro) escribirLog("[LOGRO] Desbloqueado: " + logro.nombre + " " + logro.icono, "ok");
+      guardar();
+    }
+
+    function renderLogros() {
+      // Nivel de usuario a partir de la XP acumulada
+      const nivel = Math.floor(estado.xp / XP_POR_NIVEL) + 1;
+      const dentro = estado.xp % XP_POR_NIVEL;
+      const pct = Math.round((dentro / XP_POR_NIVEL) * 100);
+
+      elNivelUsuario.textContent = "Nivel " + nivel;
+      elNivelXp.textContent = dentro + " / " + XP_POR_NIVEL + " XP";
+      elBarraNivel.style.width = pct + "%";
+      elBarraNivelW.setAttribute("aria-valuenow", String(pct));
+
+      const resueltos = Object.keys(estado.resueltos).length;
+      elResumenRetos.textContent =
+        resueltos + " de " + TOTAL_RETOS + " retos resueltos · " + estado.xp + " XP totales";
+
+      const desbloqueados = LOGROS.filter(function (l) { return estado.logros[l.id]; }).length;
+      elContadorLog.textContent = desbloqueados + "/" + LOGROS.length;
+
+      // Cuadrícula de insignias
+      elCuadricula.innerHTML = "";
+      LOGROS.forEach(function (logro) {
+        const abierto = Boolean(estado.logros[logro.id]);
+        const tarjeta = document.createElement("div");
+        tarjeta.className =
+          "rounded-xl border p-4 transition-colors " +
+          (abierto
+            ? "border-neon bg-neon/10 glow-box"
+            : "border-edge bg-bg opacity-50 grayscale");
+
+        const icono = document.createElement("p");
+        icono.className = "text-2xl";
+        icono.textContent = abierto ? logro.icono : "🔒";
+
+        const nombre = document.createElement("p");
+        nombre.className = "mt-2 text-sm font-bold " + (abierto ? "text-neon" : "text-lo");
+        nombre.textContent = logro.nombre;
+
+        const desc = document.createElement("p");
+        desc.className = "mt-1 text-[11px] leading-relaxed text-lo";
+        desc.textContent = logro.desc;
+
+        const estadoTxt = document.createElement("p");
+        estadoTxt.className = "mt-3 text-[10px] uppercase tracking-wider " + (abierto ? "text-neon" : "text-lo");
+        estadoTxt.textContent = abierto ? "▸ desbloqueado" : "bloqueado";
+
+        tarjeta.appendChild(icono);
+        tarjeta.appendChild(nombre);
+        tarjeta.appendChild(desc);
+        tarjeta.appendChild(estadoTxt);
+        elCuadricula.appendChild(tarjeta);
+      });
+    }
+
+    function abrirLogros() {
+      renderLogros();
+      elPanelLogros.classList.remove("hidden");
+      $("nav-logros").setAttribute("aria-expanded", "true");
+      $("cerrar-logros").focus();
+    }
+
+    function cerrarLogros() {
+      elPanelLogros.classList.add("hidden");
+      $("nav-logros").setAttribute("aria-expanded", "false");
+    }
+
+    /* ============================================================
+       LIGAS COMPETITIVAS (Fantasy de hackers)
+       ============================================================ */
+
+    const LIGAS = {
+      etsit: {
+        nombre: "Liga ETSIT UPM",
+        jugadores: [
+          { nombre: "xX_RootMaster_Xx", rango: "Rango Nikola Tesla", xp: 2450 },
+          { nombre: "CyberNinja",       rango: "Rango Experto",      xp: 1780 },
+          { nombre: "s3gm3nt4d0r",      rango: "Rango Profe",        xp: 940 },
+          { nombre: "ladder_lover",     rango: "Rango Alumno",       xp: 310 }
+        ]
+      },
+      clase: {
+        nombre: "Liga de Clase",
+        jugadores: [
+          { nombre: "PLC_Whisperer", rango: "Rango Experto", xp: 1120 },
+          { nombre: "modbus_kid",    rango: "Rango Profe",   xp: 760 },
+          { nombre: "AnaSCADA",      rango: "Rango Profe",   xp: 620 },
+          { nombre: "sudo_pls",      rango: "Rango Alumno",  xp: 180 }
+        ]
+      },
+      global: {
+        nombre: "Global",
+        jugadores: [
+          { nombre: "t3sl4_c0il",     rango: "Rango Nikola Tesla", xp: 5120 },
+          { nombre: "xX_RootMaster_Xx", rango: "Rango Nikola Tesla", xp: 2450 },
+          { nombre: "0xDeterminismo", rango: "Rango Experto",      xp: 2210 },
+          { nombre: "CyberNinja",     rango: "Rango Experto",      xp: 1780 }
+        ]
+      }
+    };
+
+    const elSelectorLiga = $("selector-liga");
+    const elTablaLiga    = $("tabla-liga");
+    const elResumenLiga  = $("resumen-liga");
+    const elTituloLiga   = $("titulo-liga");
+    const elModalReto    = $("modal-reto");
+    const elTextoReto    = $("texto-reto");
+
+    function rangoDelJugador() {
+      const rango = RANGOS.find(function (r) { return r.clave === estado.rango; });
+      return rango ? rango.nombre : "Rango Alumno";
+    }
+
+    function renderLiga() {
+      const clave = elSelectorLiga.value;
+      const liga = LIGAS[clave];
+      if (!liga) return;
+
+      // "Tú" entra con la XP y el rango reales de la partida en curso.
+      const filas = liga.jugadores
+        .map(function (j) { return { nombre: j.nombre, rango: j.rango, xp: j.xp, yo: false }; })
+        .concat([{ nombre: "Tú", rango: rangoDelJugador(), xp: estado.xp, yo: true }])
+        .sort(function (a, b) { return b.xp - a.xp; });
+
+      elTablaLiga.innerHTML = "";
+      filas.forEach(function (fila, i) {
+        const tr = document.createElement("tr");
+        tr.className = fila.yo ? "bg-neon/10" : "";
+
+        const pos = document.createElement("td");
+        pos.className = "tabular px-5 py-3 text-xs font-bold md:px-7 " + (i === 0 ? "text-neon" : "text-lo");
+        pos.textContent = (i === 0 ? "🥇 " : i === 1 ? "🥈 " : i === 2 ? "🥉 " : "") + "#" + (i + 1);
+
+        const nombre = document.createElement("td");
+        nombre.className = "px-3 py-3 " + (fila.yo ? "font-bold text-neon" : "text-hi");
+        nombre.textContent = fila.nombre;
+
+        const rango = document.createElement("td");
+        rango.className = "px-3 py-3 text-xs text-lo";
+        rango.textContent = fila.rango;
+
+        const xpCelda = document.createElement("td");
+        xpCelda.className = "tabular px-3 py-3 text-right text-sm " + (fila.yo ? "font-bold text-neon" : "text-hi");
+        xpCelda.textContent = fila.xp + " XP";
+
+        const accion = document.createElement("td");
+        accion.className = "px-5 py-3 text-right md:px-7";
+        const boton = document.createElement("button");
+        boton.type = "button";
+        if (fila.yo) {
+          boton.disabled = true;
+          boton.className = "rounded-lg border border-edge px-3 py-1.5 text-[11px] text-lo opacity-50 cursor-not-allowed";
+          boton.textContent = "Eres tú";
+        } else {
+          boton.className =
+            "rounded-lg border border-neon/60 px-3 py-1.5 text-[11px] font-bold text-neon transition-colors " +
+            "hover:bg-neon hover:text-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon " +
+            "focus-visible:ring-offset-2 focus-visible:ring-offset-surface";
+          boton.textContent = "Lanzar Reto";
+          boton.addEventListener("click", function () { lanzarReto(fila.nombre); });
+        }
+        accion.appendChild(boton);
+
+        tr.appendChild(pos);
+        tr.appendChild(nombre);
+        tr.appendChild(rango);
+        tr.appendChild(xpCelda);
+        tr.appendChild(accion);
+        elTablaLiga.appendChild(tr);
+      });
+
+      const miPos = filas.findIndex(function (f) { return f.yo; }) + 1;
+      elResumenLiga.textContent =
+        liga.nombre + " · " + filas.length + " jugadores · vas #" + miPos + " con " + estado.xp + " XP";
+      elTituloLiga.textContent = "alumno@shellacademy: ~/ligas/" + clave;
+    }
+
+    function lanzarReto(nombre) {
+      elTextoReto.textContent = "[!] Desafío OT enviado a " + nombre + ". Esperando conexión...";
+      elModalReto.classList.remove("hidden");
+      elModalReto.classList.add("flex");
+      $("cerrar-reto").focus();
+    }
+
+    function cerrarReto() {
+      elModalReto.classList.add("hidden");
+      elModalReto.classList.remove("flex");
+    }
+
+    /* ============================================================
+       CONMUTACIÓN DE VISTAS (sin recargar)
+       ============================================================ */
+
+    const elVistaJuego = $("vista-juego");
+    const elVistaLigas = $("vista-ligas");
+
+    function mostrarVista(vista) {
+      const esLigas = vista === "ligas";
+      elVistaJuego.classList.toggle("hidden", esLigas);
+      elVistaLigas.classList.toggle("hidden", !esLigas);
+
+      const activa = "rounded-lg border border-neon bg-neon/10 px-3 py-1.5 font-bold text-neon transition-colors " +
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-bg";
+      const inactiva = "rounded-lg border border-edge bg-panel px-3 py-1.5 font-bold text-lo transition-colors " +
+        "hover:border-neon hover:text-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon " +
+        "focus-visible:ring-offset-2 focus-visible:ring-offset-bg";
+
+      $("nav-juego").className = esLigas ? inactiva : activa;
+      $("nav-ligas").className = esLigas ? activa : inactiva;
+      $("nav-juego").setAttribute("aria-pressed", String(!esLigas));
+      $("nav-ligas").setAttribute("aria-pressed", String(esLigas));
+
+      if (esLigas) renderLiga();
+    }
+
+    /* ---------- Listeners de las vistas nuevas ---------- */
+    $("nav-juego").addEventListener("click", function () { mostrarVista("juego"); });
+    $("nav-ligas").addEventListener("click", function () { mostrarVista("ligas"); });
+    $("nav-logros").addEventListener("click", abrirLogros);
+    $("cerrar-logros").addEventListener("click", cerrarLogros);
+    $("fondo-logros").addEventListener("click", cerrarLogros);
+    $("cerrar-reto").addEventListener("click", cerrarReto);
+    elModalReto.addEventListener("click", function (evento) {
+      if (evento.target === elModalReto) cerrarReto();
+    });
+    elSelectorLiga.addEventListener("change", renderLiga);
+
+    document.addEventListener("keydown", function (evento) {
+      if (evento.key !== "Escape") return;
+      if (!elPanelLogros.classList.contains("hidden")) cerrarLogros();
+      if (!elModalReto.classList.contains("hidden")) cerrarReto();
     });
 
     /* ---------- Arranque ---------- */
     cargar();
+    renderLogros();
+    mostrarVista("juego");
     irA(1, "alumno");
   </script>
 
