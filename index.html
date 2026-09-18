@@ -4,8 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<title>ShellAcademy — Fundamentos Industriales</title>
-<meta name="description" content="Plataforma gamificada para aprender automatización industrial, redes y ciberseguridad superando retos en una terminal." />
+<title>ShellAcademy — Plataforma Educativa OT</title>
+<meta name="description" content="Plataforma gamificada de ciberseguridad industrial: 5 niveles OT con briefing teórico y enemigos que lanzan retos desde la terminal." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -101,7 +101,7 @@
         Shell<span class="text-neon">Academy</span>
       </div>
       <div class="flex flex-wrap items-center gap-3 text-xs">
-        <span id="badge-mundo" class="rounded-full border border-edge bg-panel px-3 py-1 text-lo">Mundo 1 · Sensores y Actuadores</span>
+        <span id="badge-mundo" class="rounded-full border border-edge bg-panel px-3 py-1 text-lo">Nivel 1 · Nivel Físico y de Comunicaciones</span>
         <span id="badge-rango" class="rounded-full border border-neon/50 bg-neon/10 px-3 py-1 font-bold text-neon">Rango Alumno</span>
         <span id="badge-xp" class="tabular rounded-full border border-edge bg-panel px-3 py-1 font-bold text-hi">0 XP</span>
       </div>
@@ -132,8 +132,8 @@
    <div id="vista-juego">
 
     <!-- ======================= SELECTOR DE MUNDO ======================= -->
-    <section aria-label="Mundos" class="mb-7">
-      <p class="mb-3 text-[11px] uppercase tracking-[0.2em] text-lo">Mundos</p>
+    <section aria-label="Niveles" class="mb-7">
+      <p class="mb-3 text-[11px] uppercase tracking-[0.2em] text-lo">Niveles</p>
       <div id="lista-mundos" class="grid gap-2 sm:grid-cols-3 lg:grid-cols-5"></div>
     </section>
 
@@ -150,7 +150,7 @@
         <span class="h-2.5 w-2.5 rounded-full bg-edge"></span>
         <span class="h-2.5 w-2.5 rounded-full bg-edge"></span>
         <span class="h-2.5 w-2.5 rounded-full bg-neon/60"></span>
-        <span id="titulo-ventana" class="ml-2 text-[11px] text-lo">alumno@shellacademy: ~/mundo1</span>
+        <span id="titulo-ventana" class="ml-2 text-[11px] text-lo">alumno@shellacademy: ~/nivel1</span>
       </div>
 
       <div class="border-b border-edge px-5 py-4 md:px-7">
@@ -166,7 +166,14 @@
       <div id="terminal-log" class="max-h-40 overflow-y-auto px-5 py-4 text-[13px] leading-relaxed md:px-7" aria-live="polite"></div>
 
       <div class="border-t border-edge px-5 py-7 md:px-7 md:py-9">
-        <p class="text-[11px] uppercase tracking-[0.2em] text-neon">Reto activo</p>
+        <div class="flex flex-wrap items-center gap-3">
+          <p class="text-[11px] uppercase tracking-[0.2em] text-neon">Reto activo</p>
+          <span id="badge-enemigo" class="rounded-full border border-danger/50 bg-danger/10 px-3 py-1 text-[11px] font-bold text-danger">BOT-01</span>
+          <button id="btn-briefing" type="button"
+            class="ml-auto rounded-lg border border-edge px-3 py-1.5 text-[11px] text-lo transition-colors hover:border-neon hover:text-neon focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon">
+            📖 Ver briefing
+          </button>
+        </div>
         <h1 id="texto-pregunta" class="mt-3 text-lg leading-relaxed text-hi md:text-2xl">Cargando reto…</h1>
 
         <!-- MODO 1: línea de comandos -->
@@ -217,7 +224,7 @@
     </section>
 
     <div class="mt-6 flex flex-wrap items-center justify-between gap-3 text-[11px] text-lo">
-      <span>ShellAcademy · 5 mundos · 49 retos · demo de hackathon</span>
+      <span id="pie-resumen">ShellAcademy · demo de hackathon</span>
       <button id="btn-reset" type="button" class="rounded border border-edge px-3 py-1.5 transition-colors hover:border-danger hover:text-danger">
         Reiniciar progreso
       </button>
@@ -306,6 +313,46 @@
     </div>
   </div>
 
+  <!-- ======================= BRIEFING TEÓRICO DEL NIVEL ======================= -->
+  <div
+    id="modal-briefing"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 px-6 py-10 backdrop-blur-sm"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="briefing-titulo"
+  >
+    <div class="pop-in relative max-h-full w-full max-w-2xl overflow-hidden rounded-xl border border-neon/50 bg-surface scanlines">
+      <div class="flex items-center gap-1.5 border-b border-edge bg-panel px-4 py-2.5">
+        <span class="h-2.5 w-2.5 rounded-full bg-edge"></span>
+        <span class="h-2.5 w-2.5 rounded-full bg-edge"></span>
+        <span class="h-2.5 w-2.5 rounded-full bg-neon/60"></span>
+        <span class="ml-2 text-[11px] text-lo">shellacademy — briefing teórico</span>
+      </div>
+
+      <div class="max-h-[70vh] overflow-y-auto px-6 py-7 md:px-8">
+        <p class="text-[11px] uppercase tracking-[0.2em] text-neon">Briefing de teoría</p>
+        <h2 id="briefing-titulo" class="mt-2 text-xl font-bold text-hi md:text-2xl">Nivel 1</h2>
+
+        <div class="mt-5 rounded-lg border border-neon/30 bg-neon/5 px-4 py-3">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-neon">Misión</p>
+          <p id="briefing-mision" class="mt-1 text-sm text-hi"></p>
+        </div>
+
+        <p id="briefing-teoria" class="mt-5 text-sm leading-relaxed text-lo"></p>
+
+        <div id="briefing-enemigos" class="mt-6 grid gap-2 sm:grid-cols-3 text-[11px]"></div>
+
+        <button
+          id="cerrar-briefing"
+          type="button"
+          class="mt-7 w-full rounded-lg bg-neon px-6 py-3 text-sm font-bold text-bg transition-colors hover:bg-neonDim hover:text-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+        >
+          &gt; Iniciar misión
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- ======================= PANEL LATERAL DE LOGROS ======================= -->
   <div
     id="panel-logros"
@@ -390,516 +437,661 @@
   <script>
     "use strict";
     /* ============================================================
-       BANCO DE PREGUNTAS — "Fundamentos Industriales"
-       Rangos: Alumno (fácil) · Profe (medio) · Experto (difícil)
-               Nikola Tesla (jefe supremo, mezcla de los 5 mundos)
+       BANCO DE PREGUNTAS — Game Design Document "Plataforma OT"
+       5 niveles. En cada uno, los rangos marcan el tipo de enemigo:
+         Rango Alumno  -> Enemigos menores (fácil)
+         Rango Profe   -> Sub-jefes (medio)
+         Rango Experto -> Jefes de nivel (difícil)
+         Rango Nikola Tesla -> jefe supremo, lo más duro de los 5 niveles
        ============================================================ */
 
-    /* --- Mundo 1 · Rango Alumno: set original del reto --- */
-    const preguntasMundo1 = [
-      {
-        id: 1,
-        pregunta: "¿Qué componente electrónico detecta cambios en el mundo físico, como la luz o temperatura?",
-        respuestaInput: "sensor",
-        opcionesTest: ["sensor", "actuador", "PLC", "SCADA"],
-        respuestaTest: "sensor",
-        explicacion: "¡Correcto! +50 XP. El sensor actúa como los 'sentidos' de la máquina para leer el mundo físico."
-      },
-      {
-        id: 2,
-        pregunta: "¿Qué componente recibe una orden eléctrica para ejecutar un movimiento físico?",
-        respuestaInput: "actuador",
-        opcionesTest: ["router", "firewall", "actuador", "HMI"],
-        respuestaTest: "actuador",
-        explicacion: "¡Hackeado! +50 XP. Los actuadores son los 'músculos' que ejecutan la acción, como un motor o válvula."
-      },
-      {
-        id: 3,
-        pregunta: "Si un termómetro digital marca 25°C en la fábrica, ¿actúa como sensor o actuador?",
-        respuestaInput: "sensor",
-        opcionesTest: ["actuador", "sensor", "PLC", "Switch"],
-        respuestaTest: "sensor",
-        explicacion: "¡Acceso concedido! +50 XP. Al estar midiendo una magnitud física (temperatura), su función es la de un sensor."
-      }
-    ];
-
-    /* --- Resto del banco, derivado del manual --- */
     const BANCO = {
       1: {
-        nombre: "Sensores y Actuadores",
-        alumno: preguntasMundo1.concat([
+        nombre: "Nivel Físico y de Comunicaciones",
+        mision: "Adéntrate en las profundidades de la fábrica y descubre las piezas que la hacen funcionar.",
+        briefing: "Toda infraestructura industrial (OT) tiene elementos físicos clave. Los Sensores son los «ojos y oídos» de la planta: miden cosas como temperatura o presión. Los Actuadores son los «músculos», como motores o válvulas que ejecutan acciones físicas. Toda esa información viaja hacia el PLC (Controlador Lógico Programable), el «cerebro local» encargado de tomar decisiones rápidas. A su vez, los PLCs se conectan al sistema SCADA, una pantalla central que permite a los operadores humanos supervisar y controlar toda la fábrica desde una sala de control.",
+        alumno: [
           {
-            id: 4,
-            pregunta: "Un botón de parada de emergencia, ¿se considera una entrada o una salida?",
-            respuestaInput: "entrada",
-            alias: ["input", "una entrada"],
-            opcionesTest: ["una salida", "una entrada", "un actuador", "una marca interna"],
-            respuestaTest: "una entrada",
-            explicacion: "¡Correcto! +50 XP. El botón informa al sistema de control, así que entra por el módulo de entradas (inputs)."
+            id: 101, enemigo: "BOT-01",
+            pregunta: "¿Qué dispositivo actúa como el «cerebro» directo de la maquinaria en la planta?",
+            respuestaInput: "plc",
+            alias: ["el plc", "controlador logico programable"],
+            opcionesTest: ["El PLC (Controlador Lógico Programable)", "El SCADA", "Un sensor de presión", "El switch industrial"],
+            respuestaTest: "El PLC (Controlador Lógico Programable)",
+            explicacion: "¡Correcto! +50 XP. El PLC es el cerebro local: lee las entradas y decide en milisegundos qué hacer con las salidas."
+          },
+          {
+            id: 102, enemigo: "BOT-02",
+            pregunta: "¿Qué componente mide condiciones físicas reales, como la temperatura de un tanque?",
+            respuestaInput: "sensor",
+            alias: ["un sensor", "el sensor"],
+            opcionesTest: ["Un actuador", "Un sensor", "El SCADA", "Un router industrial"],
+            respuestaTest: "Un sensor",
+            explicacion: "¡Hackeado! +50 XP. El sensor son los ojos y oídos de la planta: convierte una magnitud física en señal eléctrica."
+          },
+          {
+            id: 103, enemigo: "BOT-03",
+            pregunta: "¿Qué dispositivo realiza el trabajo físico, como abrir una válvula o mover un brazo robótico?",
+            respuestaInput: "actuador",
+            alias: ["un actuador", "el actuador"],
+            opcionesTest: ["Un sensor", "Un switch", "Un actuador", "La estación de ingeniería"],
+            respuestaTest: "Un actuador",
+            explicacion: "¡Acceso concedido! +50 XP. Los actuadores son los músculos: motores, válvulas o cilindros que ejecutan la orden."
+          },
+          {
+            id: 104, enemigo: "BOT-04",
+            pregunta: "¿Qué significan las siglas SCADA?",
+            respuestaInput: "supervision control y adquisicion de datos",
+            alias: ["supervision control adquisicion de datos", "supervision, control y adquisición de datos"],
+            opcionesTest: ["Supervisión, Control y Adquisición de Datos", "Sistema Central de Alarmas y Datos", "Servicio de Control Automático de Accesos", "Sensores, Cableado y Datos"],
+            respuestaTest: "Supervisión, Control y Adquisición de Datos",
+            explicacion: "¡Correcto! +50 XP. SCADA = Supervisión, Control y Adquisición de Datos: la vista global de la planta."
           }
-        ]),
+        ],
         profe: [
           {
-            id: 5,
-            pregunta: "Si un sensor solo puede decir 'Hay luz' o 'No hay luz' (0 o 1), ¿qué tipo de señal envía?",
-            respuestaInput: "digital",
-            alias: ["binaria", "senal digital", "digital o binaria"],
-            opcionesTest: ["analógica", "digital", "modulada", "determinista"],
-            respuestaTest: "digital",
-            explicacion: "¡Correcto! +50 XP. Dos estados posibles (0 o 1) significan señal digital o binaria."
+            id: 105, enemigo: "GUARDIA-A",
+            pregunta: "Si el operador quiere ver un gráfico general de la planta, ¿a qué sistema debe mirar?",
+            respuestaInput: "scada",
+            alias: ["hmi", "al scada", "scada o hmi", "sistema scada"],
+            opcionesTest: ["Al sistema SCADA / HMI", "Al PLC directamente", "Al sensor de campo", "Al switch del armario"],
+            respuestaTest: "Al sistema SCADA / HMI",
+            explicacion: "¡Hackeado! +50 XP. El SCADA (y la HMI a pie de máquina) es la capa de supervisión para el operador humano."
           },
           {
-            id: 6,
-            pregunta: "Si un sensor envía mediciones continuas de presión, como 1.2 o 1.3 bares, ¿qué tipo de señal usa?",
-            respuestaInput: "analogica",
-            alias: ["analógica", "senal analogica"],
-            opcionesTest: ["digital", "binaria", "analógica", "discreta"],
-            respuestaTest: "analógica",
-            explicacion: "¡Hackeado! +50 XP. Los valores continuos y variables son propios de una señal analógica."
+            id: 106, enemigo: "GUARDIA-B",
+            pregunta: "¿Por qué el PLC no envía las acciones directamente a la nube en lugar de hacerlo a los actuadores?",
+            respuestaInput: "latencia",
+            alias: ["tiempo real", "milisegundos", "por la latencia", "retraso"],
+            opcionesTest: [
+              "Porque necesita decidir en tiempo real y la nube introduce latencia",
+              "Porque la nube no admite protocolos industriales",
+              "Porque los actuadores no tienen dirección IP",
+              "Porque el SCADA lo prohíbe por seguridad"
+            ],
+            respuestaTest: "Porque necesita decidir en tiempo real y la nube introduce latencia",
+            explicacion: "¡Acceso concedido! +50 XP. Las decisiones críticas se toman en milisegundos; la nube añade un retraso inaceptable."
           },
           {
-            id: 7,
-            pregunta: "Nombra un actuador que usa aire comprimido para generar un movimiento rápido.",
-            respuestaInput: "cilindro neumatico",
-            alias: ["cilindro", "neumatico", "cilindro neumático", "piston neumatico"],
-            opcionesTest: ["cilindro neumático", "sensor inductivo", "variador de frecuencia", "termopar"],
-            respuestaTest: "cilindro neumático",
-            explicacion: "¡Acceso concedido! +50 XP. El cilindro neumático convierte aire comprimido en movimiento lineal rápido."
+            id: 107, enemigo: "GUARDIA-C",
+            pregunta: "En una estación de bombeo, ¿quién le dice al motor de la bomba que arranque tras recibir la señal del SCADA?",
+            respuestaInput: "plc",
+            alias: ["el plc"],
+            opcionesTest: ["El PLC", "El propio SCADA", "El sensor de caudal", "El firewall industrial"],
+            respuestaTest: "El PLC",
+            explicacion: "¡Correcto! +50 XP. El SCADA pide, pero quien ejecuta sobre el actuador siempre es el PLC."
           }
         ],
         experto: [
           {
-            id: 8,
-            pregunta: "Para que el PLC entienda la señal de un sensor analógico, ¿qué conversión es obligatoria?",
-            respuestaInput: "adc",
-            alias: ["analogico-digital", "conversion analogico digital", "analogica a digital"],
-            opcionesTest: ["Conversión Analógico-Digital (ADC)", "Conversión Digital-Analógica (DAC)", "Modulación PWM", "Multiplexación"],
-            respuestaTest: "Conversión Analógico-Digital (ADC)",
-            explicacion: "¡Correcto! +50 XP. El PLC solo procesa números, así que la señal continua pasa por un ADC antes de entrar."
+            id: 108, enemigo: "JEFE-LVL1",
+            pregunta: "Describe el flujo completo de información desde que un tanque se llena hasta que la válvula se cierra automáticamente.",
+            respuestaInput: "sensor plc actuador scada",
+            alias: ["sensor-plc-actuador-scada", "sensor plc valvula scada", "sensor, plc, actuador, scada"],
+            opcionesTest: [
+              "Sensor → PLC → Actuador (válvula) → PLC informa al SCADA",
+              "SCADA → Sensor → PLC → Actuador",
+              "Sensor → SCADA → PLC → Actuador",
+              "PLC → Sensor → SCADA → Actuador"
+            ],
+            respuestaTest: "Sensor → PLC → Actuador (válvula) → PLC informa al SCADA",
+            explicacion: "¡Hackeado! +50 XP. El sensor detecta el nivel, el PLC procesa la lógica y ordena cerrar la válvula, y después informa al SCADA del nuevo estado."
           },
           {
-            id: 9,
-            pregunta: "¿Cómo se llama el sensor que detecta metal mediante campos electromagnéticos sin tocarlo?",
-            respuestaInput: "inductivo",
-            alias: ["sensor inductivo"],
-            opcionesTest: ["sensor capacitivo", "sensor inductivo", "sensor óptico", "final de carrera"],
-            respuestaTest: "sensor inductivo",
-            explicacion: "¡Hackeado! +50 XP. El sensor inductivo detecta metales por campo electromagnético, sin contacto físico."
+            id: 109, enemigo: "JEFE-LVL1",
+            pregunta: "¿Qué es una Estación de Ingeniería y en qué se diferencia del SCADA?",
+            respuestaInput: "programar",
+            alias: ["programar el plc", "modificar la logica", "programa el plc", "sirve para programar"],
+            opcionesTest: [
+              "El SCADA opera y monitoriza; la Estación de Ingeniería programa la lógica del PLC",
+              "Son dos nombres para el mismo equipo",
+              "La Estación de Ingeniería solo muestra alarmas",
+              "El SCADA programa el PLC y la Estación de Ingeniería lo supervisa"
+            ],
+            respuestaTest: "El SCADA opera y monitoriza; la Estación de Ingeniería programa la lógica del PLC",
+            explicacion: "¡Acceso concedido! +50 XP. Operar y programar son funciones distintas: por eso la Estación de Ingeniería es un objetivo tan goloso para un atacante."
+          },
+          {
+            id: 110, enemigo: "JEFE-LVL1",
+            pregunta: "Si el cable entre el PLC y el SCADA se corta, ¿se detiene el proceso industrial automáticamente?",
+            respuestaInput: "no",
+            alias: ["no se detiene", "sigue funcionando", "no, sigue funcionando"],
+            opcionesTest: [
+              "No: el PLC sigue controlando en local, solo se pierde la supervisión",
+              "Sí, el proceso se para de inmediato",
+              "Sí, porque el PLC depende del SCADA para decidir",
+              "Solo se detiene si hay actuadores analógicos"
+            ],
+            respuestaTest: "No: el PLC sigue controlando en local, solo se pierde la supervisión",
+            explicacion: "¡Correcto! +50 XP. El PLC es autónomo: mantiene el control de sensores y actuadores. Lo que se pierde es la visibilidad, no el proceso."
           }
         ]
       },
 
       2: {
-        nombre: "Controladores Lógicos Programables (PLC)",
+        nombre: "Redes Industriales",
+        mision: "Navega por el ciberespacio de la red. ¡Conecta los nodos aislados!",
+        briefing: "Para que la fábrica funcione como un todo, los dispositivos deben comunicarse mediante Redes Industriales. A cada equipo se le asigna una matrícula única llamada Dirección IP. Para mantener el orden, la red se divide en zonas o «barrios» llamados Segmentos de Red, separados por un Switch o Router. Segmentar es vital: separa la red de oficinas (IT) de la red de la fábrica (OT). Si hay problemas, herramientas como el comando ping permiten comprobar si un equipo puede «hablar» con otro a través del cableado.",
         alumno: [
           {
-            id: 10,
-            pregunta: "¿Qué significan exactamente las siglas PLC?",
-            respuestaInput: "controlador logico programable",
-            alias: ["controlador lógico programable", "programmable logic controller"],
-            opcionesTest: ["Controlador Lógico Programable", "Panel Local de Control", "Protocolo de Línea Continua", "Procesador Lógico Central"],
-            respuestaTest: "Controlador Lógico Programable",
-            explicacion: "¡Correcto! +50 XP. PLC = Controlador Lógico Programable, el cerebro industrial de la máquina."
+            id: 201, enemigo: "NEXUS-1",
+            pregunta: "¿Cómo se llama el identificador numérico único que tiene cada equipo en una red Ethernet?",
+            respuestaInput: "direccion ip",
+            alias: ["ip", "la direccion ip", "dirección ip"],
+            opcionesTest: ["Dirección IP", "Dirección de registro", "Número de serie", "Puerto TCP"],
+            respuestaTest: "Dirección IP",
+            explicacion: "¡Correcto! +50 XP. La dirección IP es la matrícula del equipo dentro de la red."
           },
           {
-            id: 11,
-            pregunta: "¿Un PLC se parece más a una consola, un ordenador industrial o un router?",
-            respuestaInput: "ordenador industrial",
-            alias: ["ordenador", "un ordenador industrial"],
-            opcionesTest: ["a una consola", "a un ordenador industrial", "a un router", "a un switch gestionable"],
-            respuestaTest: "a un ordenador industrial",
-            explicacion: "¡Hackeado! +50 XP. Es un ordenador industrial ultrarresistente: aguanta calor, polvo y vibraciones."
+            id: 202, enemigo: "NEXUS-2",
+            pregunta: "¿Qué dispositivo físico se utiliza para conectar múltiples equipos PLC dentro de un mismo armario o red local?",
+            respuestaInput: "switch",
+            alias: ["un switch", "switch industrial", "conmutador"],
+            opcionesTest: ["Un switch industrial", "Un actuador", "Un historian", "Una HMI"],
+            respuestaTest: "Un switch industrial",
+            explicacion: "¡Hackeado! +50 XP. El switch interconecta los equipos del mismo segmento de red."
           },
           {
-            id: 12,
-            pregunta: "¿A qué módulo del PLC se conectan los cables de los botones de la máquina?",
-            respuestaInput: "entradas",
-            alias: ["entrada", "inputs", "modulo de entradas"],
-            opcionesTest: ["al módulo de Salidas", "al módulo de Entradas", "a la fuente de alimentación", "al puerto Ethernet"],
-            respuestaTest: "al módulo de Entradas",
-            explicacion: "¡Acceso concedido! +50 XP. Todo lo que informa al PLC (botones, sensores) entra por el módulo de entradas."
+            id: 203, enemigo: "NEXUS-3",
+            pregunta: "¿Qué comando básico de red usamos para comprobar si un dispositivo remoto está encendido y conectado?",
+            respuestaInput: "ping",
+            alias: ["el comando ping"],
+            opcionesTest: ["ping", "ls", "sudo", "cd"],
+            respuestaTest: "ping",
+            explicacion: "¡Acceso concedido! +50 XP. ping lanza un paquete y espera respuesta: la prueba de vida más básica."
           },
           {
-            id: 13,
-            pregunta: "¿A qué módulo del PLC se conectan los cables hacia las luces y motores?",
-            respuestaInput: "salidas",
-            alias: ["salida", "outputs", "modulo de salidas"],
-            opcionesTest: ["al módulo de Entradas", "al módulo de Salidas", "al módulo de comunicaciones", "a la CPU"],
-            respuestaTest: "al módulo de Salidas",
-            explicacion: "¡Correcto! +50 XP. Los actuadores (luces, motores, válvulas) cuelgan del módulo de salidas."
+            id: 204, enemigo: "NEXUS-4",
+            pregunta: "¿Qué significan las siglas IT y OT?",
+            respuestaInput: "information technology y operational technology",
+            alias: ["it information technology ot operational technology", "operational technology", "tecnologia de la informacion y tecnologia de operacion"],
+            opcionesTest: [
+              "IT = Information Technology (oficinas); OT = Operational Technology (fábrica)",
+              "IT = Industrial Technology; OT = Office Technology",
+              "IT = Internet Tools; OT = Online Terminal",
+              "Son sinónimos: ambas designan la red corporativa"
+            ],
+            respuestaTest: "IT = Information Technology (oficinas); OT = Operational Technology (fábrica)",
+            explicacion: "¡Correcto! +50 XP. IT gestiona datos de oficina; OT gobierna el mundo físico de la planta."
           }
         ],
         profe: [
           {
-            id: 14,
-            pregunta: "El PLC lee entradas, ejecuta el programa y actualiza salidas en bucle. ¿Cómo se llama ese ciclo?",
-            respuestaInput: "ciclo de scan",
-            alias: ["scan", "ciclo de barrido", "barrido"],
-            opcionesTest: ["ciclo de Scan", "ciclo de Watchdog", "ciclo de Handshake", "ciclo de Polling"],
-            respuestaTest: "ciclo de Scan",
-            explicacion: "¡Hackeado! +50 XP. Es el ciclo de Scan o barrido: leer entradas, procesar, actualizar salidas, repetir."
+            id: 205, enemigo: "FIREWALL-A",
+            pregunta: "¿Por qué es peligroso que la red de la oficina (IT) y la de la fábrica (OT) estén mezcladas en el mismo segmento?",
+            respuestaInput: "propagacion",
+            alias: ["virus", "se propaga", "propagarse", "un virus se propaga"],
+            opcionesTest: [
+              "Porque un virus de un PC de oficina puede propagarse a la maquinaria",
+              "Porque el cableado industrial no admite tráfico de oficina",
+              "Porque las IPs de oficina son más lentas",
+              "Porque el SCADA dejaría de funcionar por diseño"
+            ],
+            respuestaTest: "Porque un virus de un PC de oficina puede propagarse a la maquinaria",
+            explicacion: "¡Hackeado! +50 XP. Sin segmentación, un phishing en administración acaba parando la producción."
           },
           {
-            id: 15,
-            pregunta: "¿Qué ocurre con el programa del PLC si hay un corte de luz en la fábrica?",
-            respuestaInput: "no se borra",
-            alias: ["se mantiene", "memoria no volatil", "nada", "no se pierde"],
-            opcionesTest: ["se borra por completo", "no se borra (memoria no volátil)", "vuelve a los valores de fábrica", "se corrompe siempre"],
-            respuestaTest: "no se borra (memoria no volátil)",
-            explicacion: "¡Correcto! +50 XP. El programa vive en memoria no volátil: sobrevive al corte de alimentación."
+            id: 206, enemigo: "FIREWALL-B",
+            pregunta: "Si un PLC tiene IP 192.168.1.10 y una máscara 255.255.255.0, ¿qué parte de la IP identifica a la red?",
+            respuestaInput: "192.168.1",
+            alias: ["192.168.1.", "los tres primeros bloques", "192.168.1.0"],
+            opcionesTest: ["192.168.1", "192.168", "10", "1.10"],
+            respuestaTest: "192.168.1",
+            explicacion: "¡Acceso concedido! +50 XP. La máscara /24 fija los tres primeros bloques como red; el último identifica al equipo."
           },
           {
-            id: 16,
-            pregunta: "Si queremos que el PLC espere 5 segundos antes de encender un motor, ¿qué usamos?",
-            respuestaInput: "temporizador",
-            alias: ["timer", "un temporizador"],
-            opcionesTest: ["un contador", "un temporizador (Timer)", "una marca interna", "una entrada analógica"],
-            respuestaTest: "un temporizador (Timer)",
-            explicacion: "¡Acceso concedido! +50 XP. El temporizador (Timer) introduce retardos controlados en el programa."
+            id: 207, enemigo: "FIREWALL-C",
+            pregunta: "¿Qué elemento de red actúa como «aduana» para permitir o bloquear comunicaciones entre segmentos diferentes?",
+            respuestaInput: "firewall",
+            alias: ["cortafuegos", "un firewall", "el firewall"],
+            opcionesTest: ["Un firewall (cortafuegos)", "Un switch no gestionable", "Un historian", "Un actuador"],
+            respuestaTest: "Un firewall (cortafuegos)",
+            explicacion: "¡Correcto! +50 XP. El firewall decide qué tráfico cruza entre zonas y qué se queda fuera."
           }
         ],
         experto: [
           {
-            id: 17,
-            pregunta: "¿Qué lenguaje de programación clásico parece un plano eléctrico con relés y contactos?",
-            respuestaInput: "ladder",
-            alias: ["lenguaje ladder", "diagrama de contactos", "escalera"],
-            opcionesTest: ["Lenguaje Ladder", "Texto Estructurado", "Grafcet", "Python"],
-            respuestaTest: "Lenguaje Ladder",
-            explicacion: "¡Correcto! +50 XP. Ladder (diagrama de contactos) imita el esquema eléctrico de relés de toda la vida."
+            id: 208, enemigo: "JEFE-ROUTER",
+            pregunta: "Según el Modelo Purdue, ¿por qué no deben comunicarse directamente el Nivel 0 (sensores) y el Nivel 4 (red corporativa)?",
+            respuestaInput: "aislamiento",
+            alias: ["aislar", "segmentacion", "rompe el aislamiento", "para aislar el proceso"],
+            opcionesTest: [
+              "Porque rompería el aislamiento del proceso crítico y abriría vulnerabilidades",
+              "Porque el Nivel 0 no admite cableado Ethernet",
+              "Porque el Nivel 4 usa protocolos más rápidos",
+              "Porque el modelo Purdue solo define 3 niveles"
+            ],
+            respuestaTest: "Porque rompería el aislamiento del proceso crítico y abriría vulnerabilidades",
+            explicacion: "¡Hackeado! +50 XP. Purdue escalona la red: el Nivel 0 solo habla con el Nivel 1 (PLC). Saltarse escalones es abrir la puerta."
           },
           {
-            id: 18,
-            pregunta: "¿Qué variable usa el PLC para 'recordar' una alarma aunque el sensor vuelva a la normalidad?",
-            respuestaInput: "marca",
-            alias: ["flag", "rele interno", "relé interno", "marca interna", "bit de memoria"],
-            opcionesTest: ["una entrada digital", "una marca o relé interno (flag)", "un temporizador", "una salida analógica"],
-            respuestaTest: "una marca o relé interno (flag)",
-            explicacion: "¡Hackeado! +50 XP. La marca interna (flag) mantiene el estado memorizado hasta que alguien la resetea."
+            id: 209, enemigo: "JEFE-ROUTER",
+            pregunta: "Si un paquete llega al switch pero no se conoce la dirección MAC de destino, ¿qué protocolo se usa para averiguarla?",
+            respuestaInput: "arp",
+            alias: ["protocolo arp", "address resolution protocol"],
+            opcionesTest: ["ARP (Address Resolution Protocol)", "DHCP", "DNS", "ICMP"],
+            respuestaTest: "ARP (Address Resolution Protocol)",
+            explicacion: "¡Acceso concedido! +50 XP. ARP traduce dirección IP a dirección MAC dentro del segmento local."
           },
           {
-            id: 19,
-            pregunta: "Para leer el voltaje exacto de una batería (0 a 10V), ¿qué tipo de entrada necesita el PLC?",
-            respuestaInput: "analogica",
-            alias: ["analógica", "entrada analogica"],
-            opcionesTest: ["una entrada digital", "una entrada analógica", "una salida de relé", "un puerto serie"],
-            respuestaTest: "una entrada analógica",
-            explicacion: "¡Acceso concedido! +50 XP. Un valor continuo entre 0 y 10V exige una entrada analógica, no digital."
+            id: 210, enemigo: "JEFE-ROUTER",
+            pregunta: "Tienes un PLC en 192.168.10.5 y un SCADA en 10.0.0.5. El ping falla y el cableado está perfecto. ¿Cuál es el problema lógico más probable?",
+            respuestaInput: "router",
+            alias: ["falta un router", "gateway", "falta el gateway", "no hay router", "estan en redes distintas"],
+            opcionesTest: [
+              "Están en redes distintas y falta un router o gateway que las una",
+              "El cable de red es cruzado en lugar de directo",
+              "El PLC tiene el firmware desactualizado",
+              "El SCADA no soporta el protocolo ICMP"
+            ],
+            respuestaTest: "Están en redes distintas y falta un router o gateway que las una",
+            explicacion: "¡Correcto! +50 XP. Son dos segmentos diferentes: sin enrutado entre ellos, los paquetes no tienen por dónde salir."
           }
         ]
       },
 
       3: {
-        nombre: "La Sala de Control (SCADA)",
+        nombre: "Protocolos OT",
+        mision: "Aprende los idiomas secretos de las máquinas para traducir sus mensajes.",
+        briefing: "Incluso si dos máquinas están conectadas por el mismo cable, necesitan hablar el mismo idioma para entenderse: eso es un Protocolo. En entornos de oficina usamos HTTP o DNS. En la industria usamos protocolos OT diseñados para ser muy rápidos y simples. El más famoso es Modbus TCP, que funciona preguntando y respondiendo por «registros» de memoria. Otros más modernos como OPC UA son más seguros y estandarizados. IEC 104 se usa mucho en redes eléctricas por su capacidad de enviar datos a largas distancias. Entender el protocolo es la clave para leer los datos de la fábrica.",
         alumno: [
           {
-            id: 20,
-            pregunta: "¿Qué significan las siglas SCADA (sus tres pilares)?",
-            respuestaInput: "supervision control y adquisicion de datos",
-            alias: ["supervision control adquisicion de datos", "supervisión, control y adquisición de datos"],
-            opcionesTest: ["Supervisión, Control y Adquisición de Datos", "Sistema Central de Alarmas y Datos", "Servicio de Control Automático de Accesos", "Sistema de Cableado y Distribución"],
-            respuestaTest: "Supervisión, Control y Adquisición de Datos",
-            explicacion: "¡Correcto! +50 XP. SCADA = Supervisión, Control y Adquisición de Datos de toda la planta."
+            id: 301, enemigo: "GLYPH-1",
+            pregunta: "¿Qué es un protocolo de comunicaciones?",
+            respuestaInput: "conjunto de reglas",
+            alias: ["reglas", "un conjunto de reglas", "normas", "un idioma comun"],
+            opcionesTest: [
+              "Un conjunto de reglas que permite a dos dispositivos intercambiar información",
+              "Un tipo de cable industrial apantallado",
+              "Un modelo concreto de PLC",
+              "Una marca de switch gestionable"
+            ],
+            respuestaTest: "Un conjunto de reglas que permite a dos dispositivos intercambiar información",
+            explicacion: "¡Correcto! +50 XP. El protocolo es el idioma: sin reglas comunes, el cable transporta ruido."
           },
           {
-            id: 21,
-            pregunta: "Si la caldera supera los 90°C y parpadea un icono rojo pitando, ¿qué ha saltado?",
-            respuestaInput: "alarma",
-            alias: ["una alarma"],
-            opcionesTest: ["una alarma", "un historian", "un temporizador", "un ciclo de scan"],
-            respuestaTest: "una alarma",
-            explicacion: "¡Hackeado! +50 XP. El SCADA gestiona alarmas: avisa al operador cuando una variable sale de rango."
+            id: 302, enemigo: "GLYPH-2",
+            pregunta: "Nombra el protocolo industrial abierto más antiguo y usado, que funciona como «maestro-esclavo».",
+            respuestaInput: "modbus",
+            alias: ["modbus rtu", "modbus tcp", "el modbus"],
+            opcionesTest: ["Modbus", "OPC UA", "MQTT", "HTTPS"],
+            respuestaTest: "Modbus",
+            explicacion: "¡Hackeado! +50 XP. Modbus nació en 1979 y sigue vivo por su simplicidad maestro-esclavo."
           },
           {
-            id: 22,
-            pregunta: "¿El SCADA muestra el estado en tiempo real o solo guarda datos para el día siguiente?",
-            respuestaInput: "tiempo real",
-            alias: ["en tiempo real", "real"],
-            opcionesTest: ["solo guarda datos diferidos", "permite verlo en tiempo real", "solo imprime informes", "solo funciona sin red"],
-            respuestaTest: "permite verlo en tiempo real",
-            explicacion: "¡Acceso concedido! +50 XP. El SCADA muestra el estado en tiempo real y además historiza los datos."
+            id: 303, enemigo: "GLYPH-3",
+            pregunta: "¿Qué protocolo usarías para cargar una página web, HTTP (IT) o PROFINET (OT)?",
+            respuestaInput: "http",
+            alias: ["http it", "el http"],
+            opcionesTest: ["HTTP (IT)", "PROFINET (OT)", "Modbus TCP", "IEC 104"],
+            respuestaTest: "HTTP (IT)",
+            explicacion: "¡Acceso concedido! +50 XP. Cada mundo tiene sus protocolos: HTTP es de oficina, PROFINET es de planta."
           },
           {
-            id: 23,
-            pregunta: "¿Desde dónde interactúan normalmente los operadores con el sistema SCADA?",
-            respuestaInput: "sala de control",
-            alias: ["desde una sala de control", "sala central"],
-            opcionesTest: ["desde el armario del PLC", "desde una sala de control", "desde el propio sensor", "desde el switch de red"],
-            respuestaTest: "desde una sala de control",
-            explicacion: "¡Correcto! +50 XP. El SCADA centraliza toda la planta en una sala de control."
+            id: 304, enemigo: "GLYPH-4",
+            pregunta: "¿Qué significa que un protocolo opere en modelo «Cliente/Servidor» o «Maestro/Esclavo»?",
+            respuestaInput: "el maestro pide y el esclavo responde",
+            alias: ["uno pide y otro responde", "el cliente pide y el servidor responde", "iniciativa", "uno toma la iniciativa"],
+            opcionesTest: [
+              "Que uno toma la iniciativa y pide datos, y el otro solo responde cuando le preguntan",
+              "Que ambos equipos transmiten a la vez sin coordinarse",
+              "Que el protocolo va cifrado de extremo a extremo",
+              "Que solo funciona sobre cable serie"
+            ],
+            respuestaTest: "Que uno toma la iniciativa y pide datos, y el otro solo responde cuando le preguntan",
+            explicacion: "¡Correcto! +50 XP. El maestro (o cliente) manda la petición; el esclavo (o servidor) nunca habla por su cuenta."
           }
         ],
         profe: [
           {
-            id: 24,
-            pregunta: "¿Qué significan las siglas HMI de las pantallas táctiles a pie de máquina?",
-            respuestaInput: "interfaz hombre-maquina",
-            alias: ["interfaz hombre maquina", "interfaz hombre-máquina", "human machine interface"],
-            opcionesTest: ["Interfaz Hombre-Máquina", "Historial de Mantenimiento Industrial", "Módulo Horizontal de Inputs", "Interfaz Modbus Industrial"],
-            respuestaTest: "Interfaz Hombre-Máquina",
-            explicacion: "¡Hackeado! +50 XP. HMI = Interfaz Hombre-Máquina, la pantalla táctil a pie de máquina."
+            id: 305, enemigo: "CIPHER-A",
+            pregunta: "¿Cuál es la principal ventaja de OPC UA frente a los protocolos industriales clásicos?",
+            respuestaInput: "seguridad",
+            alias: ["cifrado", "autenticacion", "seguridad desde el diseño", "es seguro"],
+            opcionesTest: [
+              "Incorpora cifrado y autenticación desde el diseño y es independiente del fabricante",
+              "Es más antiguo y por eso más compatible",
+              "Funciona solo sobre cable serie",
+              "No necesita direccionamiento IP"
+            ],
+            respuestaTest: "Incorpora cifrado y autenticación desde el diseño y es independiente del fabricante",
+            explicacion: "¡Hackeado! +50 XP. OPC UA nace con seguridad integrada, justo lo que a Modbus le falta."
           },
           {
-            id: 25,
-            pregunta: "Para saber la temperatura, el SCADA no lee el sensor directo. ¿A quién le pide el dato?",
-            respuestaInput: "plc",
-            alias: ["al plc", "rtu", "al plc o rtu"],
-            opcionesTest: ["al PLC (o RTU)", "al actuador", "al firewall", "al historian"],
-            respuestaTest: "al PLC (o RTU)",
-            explicacion: "¡Acceso concedido! +50 XP. El PLC (o la RTU) lee el sensor y el SCADA le pide el dato a él."
+            id: 306, enemigo: "CIPHER-B",
+            pregunta: "¿En qué sector es altamente común utilizar el protocolo IEC 60870-5-104?",
+            respuestaInput: "electrico",
+            alias: ["sector electrico", "telecontrol", "subestaciones", "eléctrico"],
+            opcionesTest: ["Telecontrol y sector eléctrico (subestaciones)", "Automoción", "Alimentación y bebidas", "Farmacéutico"],
+            respuestaTest: "Telecontrol y sector eléctrico (subestaciones)",
+            explicacion: "¡Acceso concedido! +50 XP. IEC 104 domina el telecontrol eléctrico por su alcance a largas distancias."
           },
           {
-            id: 26,
-            pregunta: "¿Qué componente del software SCADA guarda el registro de temperaturas pasadas?",
-            respuestaInput: "historian",
-            alias: ["historizador", "el historian", "el historizador"],
-            opcionesTest: ["el Historian (historizador)", "la HMI", "el módulo de alarmas", "el switch industrial"],
-            respuestaTest: "el Historian (historizador)",
-            explicacion: "¡Correcto! +50 XP. El Historian almacena el histórico para analizar tendencias y auditar el proceso."
+            id: 307, enemigo: "CIPHER-C",
+            pregunta: "Modbus puede ir por cable serie antiguo (Modbus RTU) o por red moderna. ¿Cómo se llama la versión de red?",
+            respuestaInput: "modbus tcp",
+            alias: ["tcp", "modbus sobre tcp", "modbus tcp/ip"],
+            opcionesTest: ["Modbus TCP", "Modbus UDP", "Modbus UA", "Modbus IEC"],
+            respuestaTest: "Modbus TCP",
+            explicacion: "¡Correcto! +50 XP. Modbus TCP es el mismo Modbus viajando sobre Ethernet, por el puerto 502."
           }
         ],
         experto: [
           {
-            id: 27,
-            pregunta: "En SCADA de redes amplias, ¿qué significa RTU, el equipo que envía datos?",
-            respuestaInput: "unidad terminal remota",
-            alias: ["remote terminal unit"],
-            opcionesTest: ["Unidad Terminal Remota", "Red de Transmisión Unificada", "Registro de Tiempo Único", "Ruta de Transporte Universal"],
-            respuestaTest: "Unidad Terminal Remota",
-            explicacion: "¡Hackeado! +50 XP. La RTU (Unidad Terminal Remota) recoge datos en puntos geográficamente dispersos."
-          },
-          {
-            id: 28,
-            pregunta: "¿Qué protocolo actúa como 'traductor' universal para hablar con PLCs de marcas diferentes?",
-            respuestaInput: "opc",
-            alias: ["opc ua", "opcua"],
-            opcionesTest: ["OPC (OPC UA)", "Modbus RTU", "HTTP", "Profibus"],
-            respuestaTest: "OPC (OPC UA)",
-            explicacion: "¡Acceso concedido! +50 XP. OPC UA es el estándar traductor entre equipos de distintos fabricantes."
-          },
-          {
-            id: 29,
-            pregunta: "¿Cuál es la diferencia entre un SCADA y un DCS?",
-            respuestaInput: "disperso",
-            alias: ["scada supervisa procesos dispersos", "procesos dispersos", "dcs controla procesos continuos"],
+            id: 308, enemigo: "JEFE-MODBUS",
+            pregunta: "En Modbus, ¿qué es un «Coil» y en qué se diferencia de un «Holding Register»?",
+            respuestaInput: "booleano",
+            alias: ["1 bit", "un bit", "coil es booleano", "booleano de 1 bit"],
             opcionesTest: [
-              "SCADA supervisa procesos dispersos; DCS controla procesos continuos en planta",
-              "Son exactamente lo mismo con distinto nombre",
-              "SCADA es hardware y DCS es solo software",
-              "DCS solo funciona con Modbus y SCADA con OPC"
+              "El Coil es booleano de 1 bit (On/Off); el Holding Register es numérico de 16 bits",
+              "El Coil es de 16 bits y el Holding Register de 1 bit",
+              "Ambos son booleanos, cambia solo el nombre",
+              "El Coil solo existe en Modbus RTU"
             ],
-            respuestaTest: "SCADA supervisa procesos dispersos; DCS controla procesos continuos en planta",
-            explicacion: "¡Correcto! +50 XP. SCADA vigila instalaciones dispersas; el DCS controla un proceso continuo dentro de una planta."
+            respuestaTest: "El Coil es booleano de 1 bit (On/Off); el Holding Register es numérico de 16 bits",
+            explicacion: "¡Hackeado! +50 XP. Coil = bit de todo/nada. Holding Register = valor numérico de 16 bits."
+          },
+          {
+            id: 309, enemigo: "JEFE-MODBUS",
+            pregunta: "Si capturas tráfico y ves Modbus TCP por el puerto 502, ¿viaja la información cifrada o en texto plano por defecto?",
+            respuestaInput: "texto plano",
+            alias: ["sin cifrar", "no esta cifrado", "plano", "en claro"],
+            opcionesTest: ["En texto plano, sin cifrar", "Cifrada con TLS por defecto", "Cifrada solo si usa el puerto 502", "Depende del fabricante del PLC"],
+            respuestaTest: "En texto plano, sin cifrar",
+            explicacion: "¡Acceso concedido! +50 XP. Modbus nació sin seguridad: cualquiera en la red puede leer (y falsear) los valores."
+          },
+          {
+            id: 310, enemigo: "JEFE-MODBUS",
+            pregunta: "¿Qué significa el término «encapsulación» cuando hablamos de Modbus TCP?",
+            respuestaInput: "tcp/ip",
+            alias: ["encapsular", "meter el mensaje en tcp", "dentro de un paquete tcp", "se mete dentro de tcp ip"],
+            opcionesTest: [
+              "Que el mensaje Modbus original viaja metido dentro de un paquete TCP/IP",
+              "Que el mensaje se comprime para ocupar menos",
+              "Que el mensaje se cifra antes de enviarlo",
+              "Que se descarta la cabecera Modbus original"
+            ],
+            respuestaTest: "Que el mensaje Modbus original viaja metido dentro de un paquete TCP/IP",
+            explicacion: "¡Correcto! +50 XP. Encapsular es meter la trama Modbus dentro de TCP/IP para que circule por Ethernet."
           }
         ]
       },
 
       4: {
-        nombre: "Redes Industriales y Protocolos",
+        nombre: "Diagnóstico",
+        mision: "La estación de bombeo ha caído. Eres el técnico de guardia. ¡Encuentra el fallo!",
+        briefing: "Las redes industriales no son perfectas: los equipos fallan. El Diagnóstico es el arte de jugar a los detectives. Si una máquina pierde conexión, investiga metódicamente. Primero la capa física: ¿hay energía, están conectados los cables? Luego la red: ¿puedo hacer ping al equipo, hay direcciones IP duplicadas? Finalmente la aplicación: ¿se han desconfigurado los parámetros, el SCADA lee el registro incorrecto del PLC? Un analizador de tráfico te permite ver los paquetes invisibles que vuelan por el cable y encontrar el error.",
         alumno: [
           {
-            id: 30,
-            pregunta: "¿Qué es un 'protocolo de comunicación'?",
-            respuestaInput: "conjunto de reglas",
-            alias: ["reglas", "un conjunto de reglas", "normas"],
-            opcionesTest: ["un conjunto de reglas para que los equipos se entiendan", "un tipo de cable apantallado", "un modelo de PLC", "una marca de switch"],
-            respuestaTest: "un conjunto de reglas para que los equipos se entiendan",
-            explicacion: "¡Correcto! +50 XP. Un protocolo es el idioma común: las reglas que permiten que dos equipos se entiendan."
+            id: 401, enemigo: "TRACER-1",
+            pregunta: "El SCADA marca «ERROR DE COMUNICACIÓN» con el PLC-1. ¿Qué es lo primero y más básico que debes comprobar físicamente?",
+            respuestaInput: "cable",
+            alias: ["alimentacion", "que este encendido", "el cable de red", "energia y cable"],
+            opcionesTest: [
+              "Que el PLC esté encendido y el cable de red bien enchufado",
+              "Reinstalar el SCADA desde cero",
+              "Cambiar el protocolo a OPC UA",
+              "Reprogramar la lógica del PLC"
+            ],
+            respuestaTest: "Que el PLC esté encendido y el cable de red bien enchufado",
+            explicacion: "¡Correcto! +50 XP. Siempre de abajo arriba: la capa física primero. La mitad de las averías son un cable suelto."
           },
           {
-            id: 31,
-            pregunta: "Si conectamos dos ordenadores con un cable para pasar archivos, ¿es una red?",
-            respuestaInput: "si",
-            alias: ["sí", "yes", "si es una red"],
-            opcionesTest: ["sí", "no", "solo si hay un router", "solo si usan Modbus"],
-            respuestaTest: "sí",
-            explicacion: "¡Hackeado! +50 XP. Dos equipos conectados que intercambian datos ya forman una red."
+            id: 402, enemigo: "TRACER-2",
+            pregunta: "Sospechas de un fallo de red. ¿Qué herramienta en tu terminal te dice si el PLC te responde?",
+            respuestaInput: "ping",
+            alias: ["el comando ping"],
+            opcionesTest: ["El comando ping", "El comando ls", "El comando sudo", "Wireshark en modo captura"],
+            respuestaTest: "El comando ping",
+            explicacion: "¡Hackeado! +50 XP. ping confirma en un segundo si hay camino de ida y vuelta hasta el equipo."
           },
           {
-            id: 32,
-            pregunta: "¿Cómo se llama el cable de red con conector RJ45 que conecta un PC al router?",
-            respuestaInput: "ethernet",
-            alias: ["cable ethernet", "rj45"],
-            opcionesTest: ["cable Ethernet", "cable coaxial", "fibra monomodo", "cable serie RS-232"],
-            respuestaTest: "cable Ethernet",
-            explicacion: "¡Acceso concedido! +50 XP. El cable Ethernet con conector RJ45 es el estándar de las redes actuales."
+            id: 403, enemigo: "TRACER-3",
+            pregunta: "¿Qué es un «conflicto de IP»?",
+            respuestaInput: "misma ip",
+            alias: ["ip duplicada", "duplicada", "dos equipos con la misma ip", "dos dispositivos con la misma ip"],
+            opcionesTest: [
+              "Que dos dispositivos distintos tienen configurada la misma dirección IP",
+              "Que la IP tiene un formato inválido",
+              "Que el equipo perdió su IP al reiniciar",
+              "Que la máscara de red es demasiado grande"
+            ],
+            respuestaTest: "Que dos dispositivos distintos tienen configurada la misma dirección IP",
+            explicacion: "¡Acceso concedido! +50 XP. Dos equipos con la misma matrícula: la red se vuelve impredecible y la conexión baila."
           },
           {
-            id: 33,
-            pregunta: "En una red en estrella, ¿qué dispositivo central conecta múltiples equipos?",
-            respuestaInput: "switch",
-            alias: ["un switch", "conmutador"],
-            opcionesTest: ["un switch", "un sensor inductivo", "una HMI", "un cilindro neumático"],
-            respuestaTest: "un switch",
-            explicacion: "¡Correcto! +50 XP. El switch es el nodo central que interconecta los equipos en topología estrella."
+            id: 404, enemigo: "TRACER-4",
+            pregunta: "El SCADA muestra -999 grados en el horno, pero el horno está caliente. ¿Falla la red o el sensor?",
+            respuestaInput: "sensor",
+            alias: ["el sensor", "falla el sensor", "el sensor o su cableado"],
+            opcionesTest: [
+              "El sensor (o su cableado al PLC): hay comunicación, pero el valor es incoherente",
+              "La red: el paquete llega corrupto",
+              "El SCADA: tiene mal la escala de colores",
+              "El switch: está saturado de tráfico"
+            ],
+            respuestaTest: "El sensor (o su cableado al PLC): hay comunicación, pero el valor es incoherente",
+            explicacion: "¡Correcto! +50 XP. Si el dato llega, la red funciona. Un valor imposible apunta al sensor o a su cableado."
           }
         ],
         profe: [
           {
-            id: 34,
-            pregunta: "¿Qué estándar o familia de protocolos rige Internet y las fábricas modernas?",
-            respuestaInput: "tcp/ip",
-            alias: ["tcp ip", "tcpip"],
-            opcionesTest: ["TCP/IP", "Modbus RTU", "Profibus DP", "OPC UA"],
-            respuestaTest: "TCP/IP",
-            explicacion: "¡Hackeado! +50 XP. TCP/IP es el estándar mundial, también dentro de la planta industrial."
+            id: 405, enemigo: "BUG-A",
+            pregunta: "Ambos extremos del cable tienen Link UP, pero no hay ping. Las IPs son 10.0.0.5 y 192.168.1.5. ¿Cuál es el error?",
+            respuestaInput: "segmentos distintos",
+            alias: ["redes distintas", "distinto segmento", "diferentes segmentos", "falta router", "estan en redes diferentes"],
+            opcionesTest: [
+              "Están en segmentos de red distintos y no pueden hablar sin un router",
+              "El cable está roto por dentro pese al Link UP",
+              "Uno de los equipos tiene el firewall de Windows activo",
+              "El switch no soporta ICMP"
+            ],
+            respuestaTest: "Están en segmentos de red distintos y no pueden hablar sin un router",
+            explicacion: "¡Hackeado! +50 XP. Link UP prueba la capa física; el problema aquí es de capa 3, no de cable."
           },
           {
-            id: 35,
-            pregunta: "En comunicación 'Full-Duplex', ¿los equipos envían y reciben a la vez, o por turnos?",
-            respuestaInput: "a la vez",
-            alias: ["ala vez", "simultaneamente", "simultáneamente", "a la vez simultaneo"],
-            opcionesTest: ["a la vez", "por turnos", "solo reciben", "solo envían"],
-            respuestaTest: "a la vez",
-            explicacion: "¡Acceso concedido! +50 XP. Full-Duplex = transmisión y recepción simultáneas, sin esperar turno."
+            id: 406, enemigo: "BUG-B",
+            pregunta: "Ves paquetes Modbus TCP, pero el PLC responde con «Exception Response». ¿Significa que el cable está roto?",
+            respuestaInput: "no",
+            alias: ["no, la red funciona", "el cable no esta roto", "no esta roto"],
+            opcionesTest: [
+              "No: la red funciona, pero el PLC no puede ejecutar esa petición concreta",
+              "Sí: la excepción indica pérdida de enlace",
+              "Sí: hay que sustituir el latiguillo",
+              "No se puede saber sin un polímetro"
+            ],
+            respuestaTest: "No: la red funciona, pero el PLC no puede ejecutar esa petición concreta",
+            explicacion: "¡Acceso concedido! +50 XP. Si responde, se están entendiendo. La excepción suele ser pedir un registro que no existe."
           },
           {
-            id: 36,
-            pregunta: "Para comprobar si un servidor está vivo enviando un pequeño paquete, ¿qué comando usas?",
-            respuestaInput: "ping",
-            alias: ["el comando ping"],
-            opcionesTest: ["ping", "ls", "sudo", "cd"],
-            respuestaTest: "ping",
-            explicacion: "¡Correcto! +50 XP. ping envía paquetes ICMP y mide si el host responde y en cuánto tiempo."
+            id: 407, enemigo: "BUG-C",
+            pregunta: "El operador dice que los datos en pantalla tardan 5 segundos en actualizarse. ¿Qué concepto de red está fallando?",
+            respuestaInput: "latencia",
+            alias: ["congestion", "alta latencia", "retardo"],
+            opcionesTest: ["Alta latencia o congestión en la red industrial", "Conflicto de direcciones MAC", "Falta de cifrado en el protocolo", "Exceso de registros Modbus"],
+            respuestaTest: "Alta latencia o congestión en la red industrial",
+            explicacion: "¡Correcto! +50 XP. En OT la latencia es un fallo de primer orden: sin determinismo no hay control fiable."
           }
         ],
         experto: [
           {
-            id: 37,
-            pregunta: "La necesidad industrial de que un dato llegue en un tiempo garantizado se llama:",
-            respuestaInput: "determinismo",
-            alias: ["tiempo real", "determinista"],
-            opcionesTest: ["determinismo (tiempo real)", "latencia variable", "redundancia", "segmentación"],
-            respuestaTest: "determinismo (tiempo real)",
-            explicacion: "¡Hackeado! +50 XP. Una parada de emergencia debe llegar en un tiempo máximo garantizado: eso es determinismo."
+            id: 408, enemigo: "JEFE-WIRESHARK",
+            pregunta: "Ves multitud de paquetes «ARP Broadcast» inundando la red sin parar. ¿Qué problema físico podría causarlo en los switches de planta?",
+            respuestaInput: "bucle",
+            alias: ["bucle de red", "loop", "falta stp", "stp", "un bucle"],
+            opcionesTest: [
+              "Un bucle de red físico entre switches sin STP configurado",
+              "Un sensor averiado enviando lecturas erróneas",
+              "Un firewall bloqueando el tráfico Modbus",
+              "Una IP duplicada en el SCADA"
+            ],
+            respuestaTest: "Un bucle de red físico entre switches sin STP configurado",
+            explicacion: "¡Hackeado! +50 XP. Dos switches conectados en círculo generan una tormenta de broadcast. STP (Spanning Tree) existe justo para cortarla."
           },
           {
-            id: 38,
-            pregunta: "En el modelo OSI, ¿en qué capa ocurren las direcciones IP y el enrutamiento?",
-            respuestaInput: "3",
-            alias: ["capa 3", "tres", "capa de red", "red"],
-            opcionesTest: ["capa 1 (Física)", "capa 2 (Enlace)", "capa 3 (Red)", "capa 7 (Aplicación)"],
-            respuestaTest: "capa 3 (Red)",
-            explicacion: "¡Acceso concedido! +50 XP. La capa 3 (Red) es la del direccionamiento IP y el enrutamiento."
+            id: 409, enemigo: "JEFE-WIRESHARK",
+            pregunta: "Tras un corte de luz el SCADA (con DHCP) no conecta con el PLC (IP fija). ¿Qué pudo ocurrir?",
+            respuestaInput: "cambio de ip",
+            alias: ["ip diferente", "nueva ip", "el scada cambio de ip", "obtuvo otra ip"],
+            opcionesTest: [
+              "El SCADA obtuvo otra IP al reiniciar y el PLC solo confía en la antigua",
+              "El PLC perdió su programa al apagarse",
+              "El cable se degradó por el corte eléctrico",
+              "El protocolo Modbus caducó"
+            ],
+            respuestaTest: "El SCADA obtuvo otra IP al reiniciar y el PLC solo confía en la antigua",
+            explicacion: "¡Acceso concedido! +50 XP. Mezclar DHCP con reglas atadas a una IP fija es una avería esperando a que se vaya la luz."
           },
           {
-            id: 39,
-            pregunta: "¿Qué protocolo industrial de 1979 basado en Maestro/Esclavo sigue siendo muy usado?",
-            respuestaInput: "modbus",
-            alias: ["modbus rtu", "modbus tcp"],
-            opcionesTest: ["Modbus", "OPC UA", "HTTPS", "MQTT"],
-            respuestaTest: "Modbus",
-            explicacion: "¡Correcto! +50 XP. Modbus nació en 1979 y sigue vivo por su simplicidad maestro/esclavo."
+            id: 410, enemigo: "JEFE-WIRESHARK",
+            pregunta: "¿En qué se diferencia diagnosticar un fallo de Capa 2 (MAC/Switch) de uno de Capa 3 (IP/Router) en el modelo OSI?",
+            respuestaInput: "enlace local",
+            alias: ["capa 2 es local y capa 3 entre redes", "vlan", "gateway", "capa 2 local capa 3 entre redes"],
+            opcionesTest: [
+              "Capa 2 son problemas del enlace local (VLANs, cables); Capa 3, de saltar entre redes (gateway, rutas)",
+              "Capa 2 afecta al software y Capa 3 al hardware",
+              "Capa 2 es el cifrado y Capa 3 la compresión",
+              "No hay diferencia práctica al diagnosticar"
+            ],
+            respuestaTest: "Capa 2 son problemas del enlace local (VLANs, cables); Capa 3, de saltar entre redes (gateway, rutas)",
+            explicacion: "¡Correcto! +50 XP. Capa 2 se queda en el barrio; Capa 3 es cruzar de barrio. Saber en cuál estás acota la avería a la mitad."
           }
         ]
       },
 
       5: {
-        nombre: "Fundamentos de Linux y Ciberseguridad",
+        nombre: "Ciberseguridad Industrial",
+        mision: "Defiende la infraestructura crítica. ¡Detecta la intrusión y asegura la planta!",
+        briefing: "La Ciberseguridad Industrial protege los sistemas que nos dan electricidad, agua y manufactura. A diferencia del entorno IT (donde importa que los datos no se roben), en OT lo más crítico es la Disponibilidad y la Seguridad Física (Safety). Si un atacante envía un comando malicioso al PLC, podría sobrecalentar una caldera. Los principales riesgos son: protocolos sin contraseñas (inseguros por diseño), redes no segmentadas y accesos remotos no autorizados. Tu misión es detectar anomalías en la red y configurar defensas.",
         alumno: [
           {
-            id: 40,
-            pregunta: "¿Qué es Linux: un protocolo, un sistema operativo o un antivirus?",
-            respuestaInput: "sistema operativo",
-            alias: ["un sistema operativo", "so"],
-            opcionesTest: ["un protocolo", "un sistema operativo", "un antivirus", "un tipo de PLC"],
-            respuestaTest: "un sistema operativo",
-            explicacion: "¡Correcto! +50 XP. Linux es un sistema operativo, base de la mayoría de servidores y routers."
+            id: 501, enemigo: "MALWARE-1",
+            pregunta: "¿Qué es más importante proteger en un entorno OT industrial: la privacidad de los datos o la disponibilidad continua del servicio?",
+            respuestaInput: "disponibilidad",
+            alias: ["la disponibilidad", "disponibilidad continua", "la disponibilidad y la seguridad fisica"],
+            opcionesTest: ["La disponibilidad continua del servicio (y la seguridad física)", "La privacidad de los datos", "La velocidad de la red", "El coste de las licencias"],
+            respuestaTest: "La disponibilidad continua del servicio (y la seguridad física)",
+            explicacion: "¡Correcto! +50 XP. En OT se invierte la prioridad de IT: que la planta siga funcionando y nadie salga herido manda sobre la confidencialidad."
           },
           {
-            id: 41,
-            pregunta: "¿Qué sistema actúa como guardia, bloqueando tráfico peligroso en la red?",
-            respuestaInput: "firewall",
-            alias: ["cortafuegos", "el firewall", "un firewall"],
-            opcionesTest: ["el Firewall (cortafuegos)", "el Historian", "el switch", "el actuador"],
-            respuestaTest: "el Firewall (cortafuegos)",
-            explicacion: "¡Hackeado! +50 XP. El firewall filtra el tráfico y bloquea lo que no cumple las reglas."
+            id: 502, enemigo: "MALWARE-2",
+            pregunta: "Un atacante accede al PLC y descubre que no necesita contraseña. ¿A qué se debe esto?",
+            respuestaInput: "sin autenticacion",
+            alias: ["configuracion insegura", "falta de autenticacion", "inseguro por diseño", "no tiene autenticacion"],
+            opcionesTest: [
+              "A una configuración insegura y a que muchos protocolos OT antiguos carecen de autenticación",
+              "A que el PLC está en modo mantenimiento",
+              "A que el firewall bloqueó las credenciales",
+              "A que el SCADA gestiona las contraseñas por él"
+            ],
+            respuestaTest: "A una configuración insegura y a que muchos protocolos OT antiguos carecen de autenticación",
+            explicacion: "¡Hackeado! +50 XP. Muchos protocolos OT son «inseguros por diseño»: nacieron en redes aisladas donde nadie preveía un intruso."
           },
           {
-            id: 42,
-            pregunta: "Sin entorno gráfico, ¿qué herramienta de texto se usa para dar órdenes a Linux?",
-            respuestaInput: "terminal",
-            alias: ["consola", "la terminal", "shell", "linea de comandos"],
-            opcionesTest: ["la terminal (consola)", "el explorador de archivos", "la HMI", "el panel de control"],
-            respuestaTest: "la terminal (consola)",
-            explicacion: "¡Acceso concedido! +50 XP. La terminal es la interfaz de texto para dar órdenes al sistema."
+            id: 503, enemigo: "MALWARE-3",
+            pregunta: "¿Qué término se usa para describir un agujero de seguridad o un defecto de software en un equipo industrial?",
+            respuestaInput: "vulnerabilidad",
+            alias: ["una vulnerabilidad", "vulnerabilidades"],
+            opcionesTest: ["Vulnerabilidad", "Anomalía", "Latencia", "Excepción"],
+            respuestaTest: "Vulnerabilidad",
+            explicacion: "¡Acceso concedido! +50 XP. La vulnerabilidad es el fallo; el exploit es la herramienta que lo aprovecha."
           },
           {
-            id: 43,
-            pregunta: "Para un PLC, ¿se considera seguro usar la contraseña 'admin123'?",
-            respuestaInput: "no",
-            alias: ["no es seguro", "no, es una vulnerabilidad"],
-            opcionesTest: ["sí, es suficiente", "no, es una vulnerabilidad", "solo si la red es industrial", "solo en horario laboral"],
-            respuestaTest: "no, es una vulnerabilidad",
-            explicacion: "¡Correcto! +50 XP. Las credenciales por defecto o débiles son una de las puertas de entrada más explotadas."
+            id: 504, enemigo: "MALWARE-4",
+            pregunta: "¿Qué práctica básica de ciberhigiene evitaría que cualquiera en la fábrica cambie parámetros en el HMI/SCADA local?",
+            respuestaInput: "contrasenas",
+            alias: ["contraseñas", "usuarios y contraseñas", "contrasenas fuertes", "bloquear la pantalla"],
+            opcionesTest: [
+              "Usuarios con contraseñas fuertes y bloqueo de pantalla al ausentarse",
+              "Bajar el brillo del monitor",
+              "Apagar el SCADA por las noches",
+              "Cambiar el protocolo a Modbus RTU"
+            ],
+            respuestaTest: "Usuarios con contraseñas fuertes y bloqueo de pantalla al ausentarse",
+            explicacion: "¡Correcto! +50 XP. La HMI abierta y sin sesión es la puerta física más fácil de cruzar en toda la planta."
           }
         ],
         profe: [
           {
-            id: 44,
-            pregunta: "En la terminal de Linux, ¿qué comando escribes para 'listar' los archivos?",
-            respuestaInput: "ls",
-            alias: ["el comando ls", "ls -la"],
-            opcionesTest: ["ls", "cd", "sudo", "ping"],
-            respuestaTest: "ls",
-            explicacion: "¡Hackeado! +50 XP. ls lista el contenido del directorio; con -la ves también los archivos ocultos."
+            id: 505, enemigo: "HACKER-A",
+            pregunta: "Detectas que un equipo desconocido en 192.168.1.99 está enviando comandos Modbus. ¿Qué es lo primero que debes hacer?",
+            respuestaInput: "aislar",
+            alias: ["aislarla", "desconectar el puerto", "identificar y aislar", "aislarlo"],
+            opcionesTest: [
+              "Identificar físicamente qué es esa IP y aislarla desconectando su puerto del switch",
+              "Apagar toda la planta de inmediato",
+              "Responderle con comandos Modbus falsos",
+              "Esperar a ver si deja de enviar tráfico"
+            ],
+            respuestaTest: "Identificar físicamente qué es esa IP y aislarla desconectando su puerto del switch",
+            explicacion: "¡Hackeado! +50 XP. Primero contener: identifica el equipo y sácalo de la red antes de que escriba en un PLC."
           },
           {
-            id: 45,
-            pregunta: "¿Cómo se llama el ataque donde se engaña al operador por email para robar su clave?",
-            respuestaInput: "phishing",
-            alias: ["el phishing", "pishing"],
-            opcionesTest: ["Phishing", "DoS", "Segmentación", "Determinismo"],
-            respuestaTest: "Phishing",
-            explicacion: "¡Acceso concedido! +50 XP. El phishing ataca a la persona, no a la máquina: suele ser la vía de entrada inicial."
+            id: 506, enemigo: "HACKER-B",
+            pregunta: "¿Por qué instalar un antivirus moderno en un SCADA viejo con Windows XP podría ser peligroso para la planta?",
+            respuestaInput: "falso positivo",
+            alias: ["consume recursos", "ralentiza", "bloquea procesos criticos", "por los falsos positivos"],
+            opcionesTest: [
+              "Porque consume recursos y puede bloquear por falso positivo procesos críticos en tiempo real",
+              "Porque los antivirus no funcionan en Windows XP",
+              "Porque borraría el programa del PLC",
+              "Porque aumentaría la latencia del cableado"
+            ],
+            respuestaTest: "Porque consume recursos y puede bloquear por falso positivo procesos críticos en tiempo real",
+            explicacion: "¡Acceso concedido! +50 XP. En OT, la cura puede ser peor que la enfermedad: un falso positivo que para la línea es una parada de producción."
           },
           {
-            id: 46,
-            pregunta: "En Linux, para tener permisos de administrador temporal, ¿qué palabra antecede al comando?",
-            respuestaInput: "sudo",
-            alias: ["el comando sudo"],
-            opcionesTest: ["sudo", "root", "admin", "chmod"],
-            respuestaTest: "sudo",
-            explicacion: "¡Correcto! +50 XP. sudo eleva privilegios solo para ese comando concreto."
+            id: 507, enemigo: "HACKER-C",
+            pregunta: "En una red OT que nunca cambia, ¿qué significa detectar tráfico de comunicaciones desconocido?",
+            respuestaInput: "anomalia",
+            alias: ["una anomalia", "anomalía", "indicador de ataque", "es una anomalia"],
+            opcionesTest: [
+              "Es una anomalía: en OT el tráfico es repetitivo, así que lo nuevo indica ataque o fallo",
+              "Es normal: las redes siempre generan tráfico aleatorio",
+              "Significa que el switch necesita reinicio",
+              "Indica que el protocolo cambió de versión"
+            ],
+            respuestaTest: "Es una anomalía: en OT el tráfico es repetitivo, así que lo nuevo indica ataque o fallo",
+            explicacion: "¡Correcto! +50 XP. La monotonía del tráfico OT es una ventaja defensiva: cualquier novedad destaca."
           }
         ],
         experto: [
           {
-            id: 47,
-            pregunta: "¿Qué comando de Linux te permite cambiar de directorio (moverte de carpeta)?",
-            respuestaInput: "cd",
-            alias: ["change directory", "el comando cd"],
-            opcionesTest: ["cd", "ls", "mv", "ping"],
-            respuestaTest: "cd",
-            explicacion: "¡Hackeado! +50 XP. cd (change directory) es cómo te mueves por el árbol de carpetas."
+            id: 508, enemigo: "APT-OMEGA",
+            pregunta: "Un atacante hace creer al SCADA que la caldera está a 20 °C mientras obliga al PLC a calentarla a 200 °C. ¿Cómo se llama esta manipulación?",
+            respuestaInput: "spoofing",
+            alias: ["falsificacion de datos", "falsificacion", "falsificación de datos"],
+            opcionesTest: ["Spoofing o falsificación de datos", "Ransomware", "Denegación de servicio", "Escaneo de puertos"],
+            respuestaTest: "Spoofing o falsificación de datos",
+            explicacion: "¡Hackeado! +50 XP. Ocultar el estado real al operador es la firma de ataques industriales como Stuxnet."
           },
           {
-            id: 48,
-            pregunta: "¿En qué consiste el principio de 'Segmentación de Red' entre oficinas y fábrica?",
-            respuestaInput: "aislar",
-            alias: ["aislar las redes", "separar las redes", "aislar redes"],
+            id: 509, enemigo: "APT-OMEGA",
+            pregunta: "Pones un firewall industrial delante de un PLC obsoleto. ¿Qué técnica usarás para permitir lectura pero bloquear escritura?",
+            respuestaInput: "dpi",
+            alias: ["deep packet inspection", "inspeccion profunda de paquetes", "inspección profunda"],
             opcionesTest: [
-              "en aislar las redes para frenar infecciones",
-              "en unir IT y OT en una sola red plana",
-              "en usar el mismo switch para todo",
-              "en desactivar el firewall en planta"
+              "Deep Packet Inspection: analizar el paquete y bloquear los códigos de función de escritura",
+              "Cerrar el puerto 502 por completo",
+              "Cambiar la IP del PLC cada hora",
+              "Instalar un antivirus en el PLC"
             ],
-            respuestaTest: "en aislar las redes para frenar infecciones",
-            explicacion: "¡Acceso concedido! +50 XP. Segmentar aísla lo crítico: un virus en oficinas no debe parar la producción."
+            respuestaTest: "Deep Packet Inspection: analizar el paquete y bloquear los códigos de función de escritura",
+            explicacion: "¡Acceso concedido! +50 XP. El DPI mira dentro de la trama Modbus y deja pasar solo los códigos de lectura."
           },
           {
-            id: 49,
-            pregunta: "En ciberseguridad industrial, ¿qué es un ataque DoS (Denegación de Servicio)?",
-            respuestaInput: "saturar",
-            alias: ["sobrecargar", "saturar un equipo", "sobrecargar un equipo"],
+            id: 510, enemigo: "APT-OMEGA",
+            pregunta: "Un ransomware cifra el servidor SCADA y exigen rescate. ¿Cuál es la forma más rápida y segura de recuperar la instalación sin pagar?",
+            respuestaInput: "backup",
+            alias: ["restaurar backup", "copia de seguridad", "aislar y restaurar", "restaurar la copia de seguridad"],
             opcionesTest: [
-              "sobrecargar un equipo hasta saturarlo y bloquearlo",
-              "robar credenciales por email",
-              "cifrar los archivos pidiendo rescate",
-              "escuchar el tráfico sin modificarlo"
+              "Aislar la red, limpiar el servidor y restaurar la última copia de seguridad comprobada",
+              "Pagar el rescate para ganar tiempo",
+              "Reiniciar el servidor varias veces",
+              "Desconectar los PLCs y parar la planta indefinidamente"
             ],
-            respuestaTest: "sobrecargar un equipo hasta saturarlo y bloquearlo",
-            explicacion: "¡Correcto! +50 XP. El DoS satura el equipo con peticiones hasta dejarlo sin capacidad de responder."
+            respuestaTest: "Aislar la red, limpiar el servidor y restaurar la última copia de seguridad comprobada",
+            explicacion: "¡Correcto! +50 XP. Aislar, formatear y restaurar un backup verificado. Y recuerda: el PLC siguió controlando en local todo este tiempo."
           }
         ]
       }
@@ -910,9 +1102,9 @@
        ============================================================ */
 
     const RANGOS = [
-      { clave: "alumno",  nombre: "Rango Alumno",       sub: "Fácil" },
-      { clave: "profe",   nombre: "Rango Profe",        sub: "Medio" },
-      { clave: "experto", nombre: "Rango Experto",      sub: "Difícil" },
+      { clave: "alumno",  nombre: "Rango Alumno",       sub: "Enemigos menores" },
+      { clave: "profe",   nombre: "Rango Profe",        sub: "Sub-jefes" },
+      { clave: "experto", nombre: "Rango Experto",      sub: "Jefes de nivel" },
       { clave: "tesla",   nombre: "Rango Nikola Tesla", sub: "Jefe supremo" }
     ];
 
@@ -932,7 +1124,7 @@
     }
 
     // Jefe supremo: lo más duro de los cinco mundos, sin inventar preguntas nuevas.
-    const JEFE_TESLA = [8, 17, 28, 37, 48, 49].map(buscarPregunta).filter(Boolean);
+    const JEFE_TESLA = [108, 208, 308, 408, 508, 509].map(buscarPregunta).filter(Boolean);
 
     /* ---------- Estado ---------- */
     let estado = {
@@ -1070,7 +1262,7 @@
             ? "border-neon bg-neon/10 text-neon"
             : "border-edge bg-panel text-lo hover:border-neon hover:text-hi");
         boton.innerHTML =
-          '<span class="block font-bold">Mundo ' + id + (cerrado ? ' ✓' : '') + '</span>' +
+          '<span class="block font-bold">Nivel ' + id + (cerrado ? ' ✓' : '') + '</span>' +
           '<span class="mt-0.5 block text-[11px] opacity-80 nombre-mundo"></span>';
         boton.querySelector(".nombre-mundo").textContent = mundo.nombre;
         boton.addEventListener("click", function () { irA(Number(id), "alumno"); });
@@ -1120,13 +1312,13 @@
     function renderCabecera() {
       const rango = RANGOS.find(function (r) { return r.clave === estado.rango; });
       elBadgeMundo.textContent = estado.rango === "tesla"
-        ? "Jefe supremo · los 5 mundos"
-        : "Mundo " + estado.mundo + " · " + BANCO[estado.mundo].nombre;
+        ? "Jefe supremo · los 5 niveles"
+        : "Nivel " + estado.mundo + " · " + BANCO[estado.mundo].nombre;
       elBadgeRango.textContent = rango.nombre;
       elBadgeXp.textContent = estado.xp + " XP";
       elVentana.textContent = estado.rango === "tesla"
         ? "tesla@shellacademy: ~/jefe-final"
-        : estado.rango + "@shellacademy: ~/mundo" + estado.mundo;
+        : estado.rango + "@shellacademy: ~/nivel" + estado.mundo;
     }
 
     function actualizarHud(resueltos) {
@@ -1147,6 +1339,7 @@
       if (!reto) { finalizarRango(); return; }
 
       elPregunta.textContent = reto.pregunta;
+      $("badge-enemigo").textContent = reto.enemigo || "ENEMIGO";
       fallosReto = 0;
 
       // Modo consola restaurado en cada reto nuevo
@@ -1158,7 +1351,7 @@
       elComando.disabled = false;
 
       actualizarHud(estado.indice);
-      escribirLog("$ reto --mundo " + estado.mundo + " --rango " + estado.rango + " --id " + reto.id, "sys");
+      escribirLog("$ enemigo --nivel " + estado.mundo + " --id " + reto.enemigo, "sys");
 
       if (!window.matchMedia("(hover: none)").matches) elComando.focus();
     }
@@ -1167,10 +1360,12 @@
     function acierto(reto, via) {
       bloqueado = true;
       estado.xp += XP_POR_RETO;
+      // Se mira antes de apuntar el reto: así sabemos si es el primero de la partida.
+      const esPrimerReto = Object.keys(estado.resueltos).length === 0;
       estado.resueltos[reto.id] = true;
 
-      // "Primera Sangre": primer reto resuelto a la primera, tecleado en la terminal.
-      if (via === "input" && reto.id === 1 && fallosReto === 0) desbloquearLogro("primera-sangre");
+      // "Primera Sangre": primer reto de la partida, resuelto a la primera en la terminal.
+      if (via === "input" && esPrimerReto && fallosReto === 0) desbloquearLogro("primera-sangre");
       // "Persistencia": tres fallos en el mismo reto y aun así lo saca.
       if (fallosReto >= 3) desbloquearLogro("persistencia");
 
@@ -1280,7 +1475,7 @@
 
       // "Comando Sudo": rango entero sin un solo fallo.
       if (fallosRango === 0) desbloquearLogro("comando-sudo");
-      // "Experto OT": los tres rangos del Mundo 1 cerrados.
+      // "Experto OT": los tres rangos del Nivel 1 cerrados.
       if (["alumno", "profe", "experto"].every(function (r) { return estaCompletado(1, r); })) {
         desbloquearLogro("experto-ot");
       }
@@ -1299,15 +1494,15 @@
       if (estado.rango === "tesla") {
         elPregunta.textContent = "Has derrotado al jefe supremo. Fundamentos industriales dominados.";
         elTextoFin.textContent = "Rango Nikola Tesla completado con " + estado.xp + " XP. No queda nada por hackear… por ahora.";
-        $("btn-continuar").textContent = "Volver al Mundo 1";
+        $("btn-continuar").textContent = "Volver al Nivel 1";
       } else if (siguiente && rangoDesbloqueado(estado.mundo, siguiente.clave)) {
-        elPregunta.textContent = rangoActual.nombre + " superado en el Mundo " + estado.mundo + ".";
+        elPregunta.textContent = rangoActual.nombre + " superado en el Nivel " + estado.mundo + ".";
         elTextoFin.textContent = "Desbloqueado: " + siguiente.nombre + " (" + siguiente.sub + "). XP total: " + estado.xp + ".";
         $("btn-continuar").textContent = "Ir a " + siguiente.nombre;
       } else {
-        elPregunta.textContent = rangoActual.nombre + " superado en el Mundo " + estado.mundo + ".";
-        elTextoFin.textContent = "Mundo " + estado.mundo + " cerrado. Completa el rango Experto de los 5 mundos para desbloquear el Rango Nikola Tesla. XP total: " + estado.xp + ".";
-        $("btn-continuar").textContent = "Siguiente mundo";
+        elPregunta.textContent = rangoActual.nombre + " superado en el Nivel " + estado.mundo + ".";
+        elTextoFin.textContent = "Nivel " + estado.mundo + " cerrado. Completa el rango Experto de los 5 niveles para desbloquear el Rango Nikola Tesla. XP total: " + estado.xp + ".";
+        $("btn-continuar").textContent = "Siguiente nivel";
       }
 
       actualizarHud(retosDe(estado.mundo, estado.rango).length);
@@ -1348,13 +1543,19 @@
       escribirLog(
         "[SYS] " + (rango === "tesla"
           ? "JEFE SUPREMO · Rango Nikola Tesla"
-          : "Mundo " + mundo + ": " + BANCO[mundo].nombre + " · " + RANGOS.find(function (r) { return r.clave === rango; }).nombre),
+          : "Nivel " + mundo + ": " + BANCO[mundo].nombre + " · " + RANGOS.find(function (r) { return r.clave === rango; }).nombre),
         "sys"
       );
       renderMundos();
       renderRangos();
       renderCabecera();
       renderPregunta();
+
+      // El briefing se muestra al pisar un nivel por primera vez.
+      if (rango !== "tesla" && nivelConBriefingMostrado !== mundo) {
+        nivelConBriefingMostrado = mundo;
+        abrirBriefing(mundo);
+      }
     }
 
     /* ---------- Envío del formulario ---------- */
@@ -1381,6 +1582,8 @@
       }
     });
 
+    $("btn-briefing").addEventListener("click", function () { abrirBriefing(estado.mundo); });
+    $("cerrar-briefing").addEventListener("click", cerrarBriefing);
     $("btn-siguiente-reto").addEventListener("click", avanzarAhora);
     $("btn-continuar").addEventListener("click", continuar);
     $("btn-repetir").addEventListener("click", function () { irA(estado.mundo, estado.rango); });
@@ -1394,6 +1597,61 @@
       renderLiga();
       irA(1, "alumno");
     });
+
+    /* ============================================================
+       BRIEFING TEÓRICO DEL NIVEL
+       ============================================================ */
+
+    const elModalBrief = $("modal-briefing");
+    let nivelConBriefingMostrado = null;
+
+    function abrirBriefing(mundo) {
+      const nivel = BANCO[mundo];
+      if (!nivel) return;
+
+      $("briefing-titulo").textContent = "Nivel " + mundo + ": " + nivel.nombre;
+      $("briefing-mision").textContent = nivel.mision;
+      $("briefing-teoria").textContent = nivel.briefing;
+
+      // Resumen de los enemigos que esperan en este nivel
+      const tramos = [
+        { clave: "alumno",  etiqueta: "Enemigos menores" },
+        { clave: "profe",   etiqueta: "Sub-jefes" },
+        { clave: "experto", etiqueta: "Jefes de nivel" }
+      ];
+      const caja = $("briefing-enemigos");
+      caja.innerHTML = "";
+      tramos.forEach(function (tramo) {
+        const retos = nivel[tramo.clave] || [];
+        const nombres = retos.map(function (r) { return r.enemigo; })
+          .filter(function (v, i, a) { return a.indexOf(v) === i; });
+
+        const bloque = document.createElement("div");
+        bloque.className = "rounded-lg border border-edge bg-panel px-3 py-2.5";
+        const titulo = document.createElement("p");
+        titulo.className = "font-bold text-lo";
+        titulo.textContent = tramo.etiqueta;
+        const lista = document.createElement("p");
+        lista.className = "mt-1 text-danger";
+        lista.textContent = nombres.join(" · ");
+        const cuenta = document.createElement("p");
+        cuenta.className = "mt-1 text-lo";
+        cuenta.textContent = retos.length + " retos";
+        bloque.appendChild(titulo);
+        bloque.appendChild(lista);
+        bloque.appendChild(cuenta);
+        caja.appendChild(bloque);
+      });
+
+      elModalBrief.classList.remove("hidden");
+      elModalBrief.classList.add("flex");
+      $("cerrar-briefing").focus();
+    }
+
+    function cerrarBriefing() {
+      elModalBrief.classList.add("hidden");
+      elModalBrief.classList.remove("flex");
+    }
 
     /* ============================================================
        SISTEMA DE LOGROS
@@ -1418,7 +1676,7 @@
         id: "experto-ot",
         icono: "🏭",
         nombre: "Experto OT",
-        desc: "Completa los tres rangos del Mundo 1: Sensores y Actuadores."
+        desc: "Completa los tres rangos del Nivel 1: Físico y de Comunicaciones."
       },
       {
         id: "comando-sudo",
@@ -1684,7 +1942,12 @@
       if (evento.key !== "Escape") return;
       if (!elPanelLogros.classList.contains("hidden")) cerrarLogros();
       if (!elModalReto.classList.contains("hidden")) cerrarReto();
+      if (!elModalBrief.classList.contains("hidden")) cerrarBriefing();
     });
+
+    // Pie de página con las cifras reales del banco
+    $("pie-resumen").textContent =
+      "ShellAcademy · " + Object.keys(BANCO).length + " niveles · " + TOTAL_RETOS + " retos · demo de hackathon";
 
     /* ---------- Arranque ---------- */
     cargar();
