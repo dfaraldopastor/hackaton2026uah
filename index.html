@@ -293,8 +293,15 @@
       </div>
       <h2 id="modal-titulo" class="glow text-2xl font-bold text-neon">ACCESO CONCEDIDO</h2>
       <p id="modal-explicacion" class="mt-4 text-sm leading-relaxed text-hi"></p>
-      <p class="mt-6 text-[11px] text-lo">
-        Siguiente reto en <span id="cuenta-atras" class="tabular font-bold text-neon">3</span>s
+      <button
+        id="btn-siguiente-reto"
+        type="button"
+        class="mt-6 w-full rounded-lg border border-neon px-5 py-2.5 text-sm font-bold text-neon transition-colors hover:bg-neon hover:text-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon focus-visible:ring-offset-2 focus-visible:ring-offset-panel"
+      >
+        Siguiente reto ahora
+      </button>
+      <p class="mt-3 text-[11px] text-lo">
+        O espera: avanza solo en <span id="cuenta-atras" class="tabular font-bold text-neon">10</span>s
       </p>
     </div>
   </div>
@@ -910,6 +917,7 @@
     ];
 
     const XP_POR_RETO = 50;
+    const SEGUNDOS_POPUP = 10;   // tiempo para leer la explicación antes de avanzar
     const CLAVE_GUARDADO = "shellacademy.progreso.v1";
 
     // Busca una pregunta por id en todo el banco (para montar el jefe final).
@@ -939,6 +947,7 @@
 
     let bloqueado = false;
     let temporizadores = [];
+    let ticActual = null;  // intervalo de la cuenta atrás del pop-up
     let fallosReto = 0;    // fallos acumulados en el reto en curso
     let fallosRango = 0;   // fallos acumulados en el rango en curso
 
@@ -1175,19 +1184,25 @@
       elOverlay.classList.remove("hidden");
       elOverlay.classList.add("flex");
 
-      let restante = 3;
+      let restante = SEGUNDOS_POPUP;
       elCuenta.textContent = String(restante);
-      const tic = setInterval(function () {
+      clearInterval(ticActual);
+      ticActual = setInterval(function () {
         restante -= 1;
         elCuenta.textContent = String(Math.max(restante, 0));
-        if (restante <= 0) clearInterval(tic);
+        if (restante <= 0) clearInterval(ticActual);
       }, 1000);
 
-      temporizadores.push(setTimeout(function () {
-        clearInterval(tic);
-        cerrarModal();
-        siguientePregunta();
-      }, 3000));
+      temporizadores.push(setTimeout(avanzarAhora, SEGUNDOS_POPUP * 1000));
+    }
+
+    // Cierra el pop-up y pasa al siguiente reto, venga del temporizador o del botón.
+    function avanzarAhora() {
+      limpiarTemporizadores();
+      clearInterval(ticActual);
+      ticActual = null;
+      cerrarModal();
+      siguientePregunta();
     }
 
     function cerrarModal() {
@@ -1366,6 +1381,7 @@
       }
     });
 
+    $("btn-siguiente-reto").addEventListener("click", avanzarAhora);
     $("btn-continuar").addEventListener("click", continuar);
     $("btn-repetir").addEventListener("click", function () { irA(estado.mundo, estado.rango); });
     $("btn-reset").addEventListener("click", function () {
